@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, 
+import {
+  Container, Grid, Paper, Typography, Button, TextField, Table, TableBody,
   TableCell, TableHead, TableRow, Chip, Box, Dialog, DialogTitle, DialogContent,
   DialogActions, Alert, Pagination, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
@@ -50,11 +50,11 @@ const Wallet = () => {
     if (amountValue < 50) {
       return toast.error('Minimum 50 TRY yükleyebilirsiniz');
     }
-    
+
     try {
       setLoading(true);
       const res = await topUpWallet({ amount: amountValue });
-      
+
       if (res.data.data.paymentUrl) {
         // Payment gateway'e yönlendir
         setPaymentModal({ open: true, paymentUrl: res.data.data.paymentUrl, paymentId: res.data.data.paymentId });
@@ -95,21 +95,25 @@ const Wallet = () => {
   }, []);
 
   const getTransactionTypeLabel = (type) => {
-    switch(type) {
+    switch (type) {
       case 'deposit': return 'Yükleme';
+      case 'payment': return 'Ödeme';
       case 'withdrawal': return 'Harcama';
       case 'pending': return 'Beklemede';
       case 'refund': return 'İade';
+      case 'transfer': return 'Transfer';
       default: return type;
     }
   };
 
   const getTransactionTypeColor = (type) => {
-    switch(type) {
+    switch (type) {
       case 'deposit': return 'success';
+      case 'payment': return 'error';
       case 'withdrawal': return 'error';
       case 'pending': return 'warning';
       case 'refund': return 'info';
+      case 'transfer': return 'primary';
       default: return 'default';
     }
   };
@@ -137,25 +141,25 @@ const Wallet = () => {
                 <AddCircleIcon color="primary" />
                 <Typography variant="h6">Para Yükle</Typography>
               </Box>
-              
+
               <Alert severity="info" sx={{ mb: 2 }}>
                 Minimum yükleme tutarı: 50 ₺
               </Alert>
 
-              <TextField 
-                fullWidth 
-                label="Miktar (TL)" 
-                type="number" 
+              <TextField
+                fullWidth
+                label="Miktar (TL)"
+                type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 inputProps={{ min: 50, step: 0.01 }}
                 sx={{ mb: 2 }}
                 helperText="Minimum 50 TRY"
               />
-              
-              <Button 
-                variant="contained" 
-                fullWidth 
+
+              <Button
+                variant="contained"
+                fullWidth
                 onClick={handleTopUp}
                 disabled={loading || !amount || parseFloat(amount) < 50}
                 startIcon={<CreditCardIcon />}
@@ -206,8 +210,8 @@ const Wallet = () => {
                           </TableCell>
                           <TableCell>{t.description || '-'}</TableCell>
                           <TableCell align="right">
-                            <Typography 
-                              variant="body2" 
+                            <Typography
+                              variant="body2"
                               color={t.type === 'deposit' || t.type === 'refund' ? 'success.main' : 'error.main'}
                               fontWeight="bold"
                             >
@@ -218,10 +222,10 @@ const Wallet = () => {
                             {t.balance_after ? `${parseFloat(t.balance_after).toFixed(2)} ₺` : '-'}
                           </TableCell>
                           <TableCell>
-                            <Chip 
-                              label={getTransactionTypeLabel(t.type)} 
-                              color={getTransactionTypeColor(t.type)} 
-                              size="small" 
+                            <Chip
+                              label={getTransactionTypeLabel(t.type)}
+                              color={getTransactionTypeColor(t.type)}
+                              size="small"
                             />
                           </TableCell>
                         </TableRow>
@@ -231,9 +235,9 @@ const Wallet = () => {
 
                   {totalPages > 1 && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                      <Pagination 
-                        count={totalPages} 
-                        page={page} 
+                      <Pagination
+                        count={totalPages}
+                        page={page}
                         onChange={(e, value) => setPage(value)}
                         color="primary"
                       />

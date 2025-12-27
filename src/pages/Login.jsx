@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { 
-  Container, Box, Typography, Button, Grid, Link as MuiLink, 
-  InputAdornment, IconButton, Alert, Paper, CircularProgress 
+import {
+  Container, Box, Typography, Button, Grid, Link as MuiLink,
+  InputAdornment, IconButton, Alert, Paper, CircularProgress, useTheme
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -21,6 +21,8 @@ const validationSchema = Yup.object({
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
@@ -36,7 +38,7 @@ const Login = () => {
       } catch (err) {
         // --- BEYAZ EKRAN SORUNU İÇİN GÜVENLİK KONTROLÜ ---
         let message = 'Giriş yapılamadı. Lütfen bilgilerinizi kontrol edin.';
-        
+
         // Backend'den gelen hatayı kontrol et
         if (err.response?.data) {
           const apiError = err.response.data.error || err.response.data.message;
@@ -44,11 +46,11 @@ const Login = () => {
           if (typeof apiError === 'string') {
             message = apiError;
           } else if (typeof apiError === 'object') {
-             // Eğer obje gelirse (örn: validasyon hatası), stringe çevir veya ilkini al
-             message = Object.values(apiError)[0] || JSON.stringify(apiError);
+            // Eğer obje gelirse (örn: validasyon hatası), stringe çevir veya ilkini al
+            message = Object.values(apiError)[0] || JSON.stringify(apiError);
           }
         }
-        
+
         setError(message);
         toast.error(message);
       } finally {
@@ -63,7 +65,9 @@ const Login = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #4f46e5 0%, #ec4899 100%)', // Modern Gradient
+      background: isDarkMode
+        ? 'linear-gradient(135deg, #1e1b4b 0%, #831843 100%)'
+        : 'linear-gradient(135deg, #4f46e5 0%, #ec4899 100%)',
       p: 2
     }}>
       <Container maxWidth="xs">
@@ -73,21 +77,21 @@ const Login = () => {
           flexDirection: 'column',
           alignItems: 'center',
           borderRadius: 4,
-          bgcolor: 'rgba(255, 255, 255, 0.95)',
+          bgcolor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(10px)'
         }}>
-          <Box sx={{ 
-            p: 2, 
-            bgcolor: 'primary.main', 
-            borderRadius: '50%', 
+          <Box sx={{
+            p: 2,
+            bgcolor: 'primary.main',
+            borderRadius: '50%',
             color: 'white',
             mb: 2,
-            boxShadow: '0 4px 20px rgba(79, 70, 229, 0.4)' 
+            boxShadow: '0 4px 20px rgba(79, 70, 229, 0.4)'
           }}>
             <LoginIcon fontSize="large" />
           </Box>
-          
-          <Typography component="h1" variant="h5" sx={{ fontWeight: 800, color: '#1e293b', mb: 1 }}>
+
+          <Typography component="h1" variant="h5" sx={{ fontWeight: 800, color: 'text.primary', mb: 1 }}>
             Giriş Yap
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -98,11 +102,11 @@ const Login = () => {
 
           <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ width: '100%' }}>
             <FormInput formik={formik} name="email" label="E-posta Adresi" autoFocus />
-            
-            <FormInput 
-              formik={formik} 
-              name="password" 
-              label="Şifre" 
+
+            <FormInput
+              formik={formik}
+              name="password"
+              label="Şifre"
               type={showPassword ? 'text' : 'password'}
               InputProps={{
                 endAdornment: (
@@ -116,9 +120,9 @@ const Login = () => {
             />
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-               <MuiLink component={Link} to="/forgot-password" variant="body2" sx={{ fontWeight: 600, textDecoration: 'none' }}>
-                  Şifremi Unuttum?
-               </MuiLink>
+              <MuiLink component={Link} to="/forgot-password" variant="body2" sx={{ fontWeight: 600, textDecoration: 'none' }}>
+                Şifremi Unuttum?
+              </MuiLink>
             </Box>
 
             <Button
@@ -131,7 +135,7 @@ const Login = () => {
             >
               {formik.isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Giriş Yap'}
             </Button>
-            
+
             <Grid container justifyContent="center">
               <Grid item>
                 <Typography variant="body2" color="text.secondary">

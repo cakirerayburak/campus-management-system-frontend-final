@@ -277,7 +277,7 @@ const AuditLogs = () => {
                     <>
                         <Table>
                             <TableHead>
-                                <TableRow sx={{ bgcolor: '#f9fafb' }}>
+                                <TableRow sx={{ bgcolor: 'action.hover' }}>
                                     <TableCell sx={{ fontWeight: 600 }}>Tarih</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Kullanıcı</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Aksiyon</TableCell>

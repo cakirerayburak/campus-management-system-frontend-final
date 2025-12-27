@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { 
-  Container, Box, Typography, Button, Grid, Link as MuiLink, 
+import {
+  Container, Box, Typography, Button, Grid, Link as MuiLink,
   MenuItem, TextField, Checkbox, FormControlLabel, Paper, Alert,
-  CircularProgress, InputAdornment, IconButton
+  CircularProgress, InputAdornment, IconButton, useTheme
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Visibility from '@mui/icons-material/Visibility';
@@ -30,6 +30,8 @@ const validationSchema = Yup.object({
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [departments, setDepartments] = useState([]);
@@ -61,9 +63,9 @@ const Register = () => {
       try {
         // department_id boşsa null gönder (UUID bekliyor)
         const requestData = {
-          name: values.name, 
-          email: values.email, 
-          password: values.password, 
+          name: values.name,
+          email: values.email,
+          password: values.password,
           role: values.role,
           department_id: values.department_id || null, // Boşsa null gönder
           ...(values.role === 'student' && { student_number: values.student_number }),
@@ -75,9 +77,9 @@ const Register = () => {
         // Güvenli Hata Mesajı
         let message = 'Kayıt başarısız.';
         if (err.response?.data) {
-             const apiError = err.response.data.error || err.response.data.message;
-             if (typeof apiError === 'string') message = apiError;
-             else if (typeof apiError === 'object') message = Object.values(apiError)[0] || JSON.stringify(apiError);
+          const apiError = err.response.data.error || err.response.data.message;
+          if (typeof apiError === 'string') message = apiError;
+          else if (typeof apiError === 'object') message = Object.values(apiError)[0] || JSON.stringify(apiError);
         }
         setError(message);
         toast.error(message);
@@ -93,24 +95,26 @@ const Register = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #4f46e5 0%, #ec4899 100%)', // Login ile aynı tema
-      py: 5, px: 2 
+      background: isDarkMode
+        ? 'linear-gradient(135deg, #1e1b4b 0%, #831843 100%)'
+        : 'linear-gradient(135deg, #4f46e5 0%, #ec4899 100%)',
+      py: 5, px: 2
     }}>
       <Container maxWidth="sm">
         <Paper elevation={24} sx={{
-          p: { xs: 3, md: 5 }, // Mobilde daha az boşluk
+          p: { xs: 3, md: 5 },
           borderRadius: 4,
-          bgcolor: 'rgba(255, 255, 255, 0.95)',
+          bgcolor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(10px)'
         }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-            <Box sx={{ 
-              p: 2, bgcolor: 'secondary.main', borderRadius: '50%', 
-              color: 'white', mb: 2, boxShadow: '0 4px 15px rgba(236, 72, 153, 0.4)' 
+            <Box sx={{
+              p: 2, bgcolor: 'secondary.main', borderRadius: '50%',
+              color: 'white', mb: 2, boxShadow: '0 4px 15px rgba(236, 72, 153, 0.4)'
             }}>
               <PersonAddIcon fontSize="large" />
             </Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: '#1e293b' }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
               Aramıza Katılın
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -125,7 +129,7 @@ const Register = () => {
               <Grid item xs={12}>
                 <TextField fullWidth label="Ad Soyad" name="name" value={formik.values.name} onChange={formik.handleChange} error={formik.touched.name && Boolean(formik.errors.name)} helperText={formik.touched.name && formik.errors.name} />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <TextField fullWidth label="E-posta" name="email" value={formik.values.email} onChange={formik.handleChange} error={formik.touched.email && Boolean(formik.errors.email)} helperText={formik.touched.email && formik.errors.email} />
               </Grid>
@@ -143,11 +147,11 @@ const Register = () => {
 
               <Grid item xs={12} sm={6}>
                 <TextField
-                  fullWidth 
-                  select 
-                  label="Bölüm" 
+                  fullWidth
+                  select
+                  label="Bölüm"
                   name="department_id"
-                  value={formik.values.department_id || ''} 
+                  value={formik.values.department_id || ''}
                   onChange={formik.handleChange}
                   error={formik.touched.department_id && Boolean(formik.errors.department_id)}
                   disabled={loadingDepartments}

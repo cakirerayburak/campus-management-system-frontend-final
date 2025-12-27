@@ -22,20 +22,20 @@ const MySchedule = () => {
     try {
       setLoading(true);
       const res = await getMySchedule();
-      
+
       // Backend'den gelen veriyi FullCalendar formatına çeviriyoruz
       const daysMap = { 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5 };
-      
+
       const calendarEvents = (res.data.data || []).map((item, index) => {
         const courseCode = item.section?.course?.code || item.course?.code || 'Ders';
         const sectionCode = item.section?.section_code || '';
         const classroom = item.classroom?.code || item.classroom_code || 'Derslik Yok';
         const instructor = item.section?.instructor?.name || item.instructor?.name || '';
-        
+
         // Renk paleti (farklı dersler için)
         const colors = ['#3788d8', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#0891b2'];
         const color = colors[index % colors.length];
-        
+
         return {
           id: item.id,
           title: `${courseCode}${sectionCode ? ` (${sectionCode})` : ''}`,
@@ -51,7 +51,7 @@ const MySchedule = () => {
           }
         };
       });
-      
+
       setEvents(calendarEvents);
     } catch (error) {
       console.error(error);
@@ -92,8 +92,8 @@ Saat: ${event.start.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-di
           <Typography variant="h4" sx={{ fontWeight: 700 }}>
             Haftalık Ders Programım
           </Typography>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             startIcon={<DownloadIcon />}
             onClick={handleDownloadIcal}
             size="large"
@@ -142,7 +142,7 @@ Saat: ${event.start.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-di
 
         {/* Ders Renkleri Açıklaması */}
         {events.length > 0 && (
-          <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+          <Box sx={{ mt: 3, p: 2, bgcolor: 'action.hover', borderRadius: 2 }}>
             <Typography variant="body2" color="text.secondary">
               <strong>Not:</strong> Derslere tıklayarak detayları görebilirsiniz. Programı Google Calendar, Outlook gibi uygulamalara eklemek için "iCal İndir" butonunu kullanın.
             </Typography>

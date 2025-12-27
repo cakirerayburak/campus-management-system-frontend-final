@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Container, Grid, Card, CardContent, Typography, Button, Box, 
-  Dialog, DialogTitle, DialogContent, DialogActions, Chip, 
+import {
+  Container, Grid, Card, CardContent, Typography, Button, Box,
+  Dialog, DialogTitle, DialogContent, DialogActions, Chip,
   TextField, Paper
 } from '@mui/material';
 import { getMenus, createReservation, getMenuDetail } from '../services/mealService';
@@ -100,7 +100,7 @@ const MealMenu = () => {
                         <Typography variant="h6" color="primary">
                           {menu.Cafeteria?.name || 'Yemekhane'}
                         </Typography>
-                        <Chip 
+                        <Chip
                           label={parseFloat(menu.price) === 0 ? 'Ücretsiz' : `${menu.price} ₺`}
                           color={parseFloat(menu.price) === 0 ? 'success' : 'default'}
                           size="small"
@@ -128,7 +128,7 @@ const MealMenu = () => {
 
                       {/* Beslenme Bilgileri */}
                       {menu.nutrition_json && (
-                        <Box sx={{ mt: 2, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+                        <Box sx={{ mt: 2, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
                           <Typography variant="caption" display="block">
                             <strong>Kalori:</strong> {menu.nutrition_json.calories || 'N/A'} kcal
                           </Typography>
@@ -151,9 +151,9 @@ const MealMenu = () => {
                       </Box>
                     </CardContent>
                     <Box sx={{ p: 2, pt: 0 }}>
-                      <Button 
-                        variant="contained" 
-                        fullWidth 
+                      <Button
+                        variant="contained"
+                        fullWidth
                         onClick={() => openReservationModal(menu)}
                         disabled={loading}
                       >
@@ -188,7 +188,7 @@ const MealMenu = () => {
                         <Typography variant="h6" color="primary">
                           {menu.Cafeteria?.name || 'Yemekhane'}
                         </Typography>
-                        <Chip 
+                        <Chip
                           label={parseFloat(menu.price) === 0 ? 'Ücretsiz' : `${menu.price} ₺`}
                           color={parseFloat(menu.price) === 0 ? 'success' : 'default'}
                           size="small"
@@ -214,7 +214,7 @@ const MealMenu = () => {
                       </Box>
 
                       {menu.nutrition_json && (
-                        <Box sx={{ mt: 2, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+                        <Box sx={{ mt: 2, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
                           <Typography variant="caption" display="block">
                             <strong>Kalori:</strong> {menu.nutrition_json.calories || 'N/A'} kcal
                           </Typography>
@@ -236,9 +236,9 @@ const MealMenu = () => {
                       </Box>
                     </CardContent>
                     <Box sx={{ p: 2, pt: 0 }}>
-                      <Button 
-                        variant="contained" 
-                        fullWidth 
+                      <Button
+                        variant="contained"
+                        fullWidth
                         onClick={() => openReservationModal(menu)}
                         disabled={loading}
                       >
@@ -277,8 +277,8 @@ const MealMenu = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setReservationModal({ open: false, menu: null })}>İptal</Button>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               onClick={() => handleReserve(reservationModal.menu.id)}
               disabled={loading}
             >
