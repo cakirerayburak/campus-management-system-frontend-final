@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { 
-  Grid, Paper, Typography, Box, CircularProgress, 
-  Card, Avatar, List, ListItem, ListItemText, Divider, Chip ,Button
+import {
+  Grid, Paper, Typography, Box, CircularProgress,
+  Card, Avatar, List, ListItem, ListItemText, Divider, Chip, Button
 } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 import ClassIcon from '@mui/icons-material/Class';
@@ -37,23 +37,23 @@ const Dashboard = () => {
 
   // Modern StatCard Bileşeni
   const StatCard = ({ title, value, icon, color, bgColor }) => (
-    <Card sx={{ 
-      height: '100%', 
-      display: 'flex', 
-      alignItems: 'center', 
-      p: 3, 
-      borderRadius: 4, 
+    <Card sx={{
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      p: 3,
+      borderRadius: 4,
       boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
       transition: 'transform 0.2s',
       '&:hover': { transform: 'translateY(-5px)' }
     }}>
-      <Avatar sx={{ 
-        bgcolor: bgColor, 
-        color: color, 
-        width: 64, 
-        height: 64, 
+      <Avatar sx={{
+        bgcolor: bgColor,
+        color: color,
+        width: 64,
+        height: 64,
         mr: 2.5,
-        borderRadius: 3 
+        borderRadius: 3
       }}>
         {icon}
       </Avatar>
@@ -80,43 +80,43 @@ const Dashboard = () => {
       </Box>
 
       <Grid container spacing={3}>
-        
+
         {/* --- ÖĞRENCİ KARTLARI --- */}
         {user?.role === 'student' && (
           <>
             <Grid item xs={12} sm={6} md={3}>
-              <StatCard 
-                title="Genel Ortalama (GPA)" 
-                value={stats?.gpa || "0.00"} 
-                icon={<GradeIcon fontSize="large" />} 
-                color="#ca8a04" 
+              <StatCard
+                title="Genel Ortalama (GPA)"
+                value={stats?.gpa || "0.00"}
+                icon={<GradeIcon fontSize="large" />}
+                color="#ca8a04"
                 bgColor="#fef9c3"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <StatCard 
-                title="Aktif Dersler" 
-                value={stats?.activeCourses || 0} 
-                icon={<ClassIcon fontSize="large" />} 
-                color="#2563eb" 
+              <StatCard
+                title="Aktif Dersler"
+                value={stats?.activeCourses || 0}
+                icon={<ClassIcon fontSize="large" />}
+                color="#2563eb"
                 bgColor="#dbeafe"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <StatCard 
-                title="Yoklama Katılımı" 
-                value={stats?.totalAttendance || 0} 
-                icon={<EventAvailableIcon fontSize="large" />} 
-                color="#16a34a" 
+              <StatCard
+                title="Yoklama Katılımı"
+                value={stats?.totalAttendance || 0}
+                icon={<EventAvailableIcon fontSize="large" />}
+                color="#16a34a"
                 bgColor="#dcfce7"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <StatCard 
-                title="Öğrenci Numarası" 
-                value={stats?.studentNumber || "-"} 
-                icon={<SchoolIcon fontSize="large" />} 
-                color="#9333ea" 
+              <StatCard
+                title="Öğrenci Numarası"
+                value={stats?.studentNumber || "-"}
+                icon={<SchoolIcon fontSize="large" />}
+                color="#9333ea"
                 bgColor="#f3e8ff"
               />
             </Grid>
@@ -126,21 +126,21 @@ const Dashboard = () => {
         {/* --- AKADEMİSYEN KARTLARI --- */}
         {user?.role === 'faculty' && (
           <>
-             <Grid item xs={12} sm={6} md={6}>
-              <StatCard 
-                title="Aktif Şubeler" 
-                value={stats?.activeSections || 0} 
-                icon={<ClassIcon fontSize="large" />} 
-                color="#2563eb" 
+            <Grid item xs={12} sm={6} md={6}>
+              <StatCard
+                title="Aktif Şubeler"
+                value={stats?.activeSections || 0}
+                icon={<ClassIcon fontSize="large" />}
+                color="#2563eb"
                 bgColor="#dbeafe"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={6}>
-              <StatCard 
-                title="Unvan" 
-                value={user?.facultyProfile?.title || "Öğr. Üyesi"} 
-                icon={<PersonIcon fontSize="large" />} 
-                color="#0891b2" 
+              <StatCard
+                title="Unvan"
+                value={user?.facultyProfile?.title || "Öğr. Üyesi"}
+                icon={<PersonIcon fontSize="large" />}
+                color="#0891b2"
                 bgColor="#cffafe"
               />
             </Grid>
@@ -164,12 +164,12 @@ const Dashboard = () => {
                       <ListItemText
                         primary={
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-                             <Typography variant="subtitle1" component="span" fontWeight="600" color="#334155">
-                                {ann.title}
-                             </Typography>
-                             {ann.priority === 'high' && 
-                               <Chip label="Önemli" size="small" sx={{ bgcolor: '#fee2e2', color: '#dc2626', height: 24, fontWeight: 600, fontSize: '0.7rem' }} />
-                             }
+                            <Typography variant="subtitle1" component="span" fontWeight="600" color="#334155">
+                              {ann.title}
+                            </Typography>
+                            {ann.priority === 'high' &&
+                              <Chip label="Önemli" size="small" sx={{ bgcolor: '#fee2e2', color: '#dc2626', height: 24, fontWeight: 600, fontSize: '0.7rem' }} />
+                            }
                           </Box>
                         }
                         secondary={
@@ -178,7 +178,7 @@ const Dashboard = () => {
                               {ann.content}
                             </Typography>
                             <Typography variant="caption" color="text.disabled" fontWeight="500">
-                              {new Date(ann.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              {new Date(ann.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
                           </Box>
                         }
@@ -195,38 +195,38 @@ const Dashboard = () => {
             </List>
           </Paper>
         </Grid>
-        
+
         {/* --- SAĞ TARAF (BASİT TAKVİM ALANI) --- */}
         <Grid item xs={12} md={4}>
-            <Paper sx={{ 
-                p: 3, height: '100%', 
-                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', 
-                color: 'white',
-                borderRadius: 4,
-                display: 'flex', 
-                flexDirection: 'column', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                textAlign: 'center', 
-                minHeight: 250,
-                boxShadow: '0 10px 30px -10px rgba(99, 102, 241, 0.5)'
-            }}>
-                <Typography variant="h5" fontWeight="700" gutterBottom>Akademik Takvim</Typography>
-                <Typography variant="body2" sx={{ opacity: 0.9, mb: 3 }}>
-                    Ders programınız ve sınav tarihlerinizi yakında buradan takip edebileceksiniz.
-                </Typography>
-                <Button 
-                    variant="contained" 
-                    sx={{ 
-                        bgcolor: 'white', 
-                        color: '#6366f1', 
-                        fontWeight: 'bold',
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } 
-                    }}
-                >
-                    Takvimi Görüntüle
-                </Button>
-            </Paper>
+          <Paper sx={{
+            p: 3, height: '100%',
+            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            color: 'white',
+            borderRadius: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            minHeight: 250,
+            boxShadow: '0 10px 30px -10px rgba(99, 102, 241, 0.5)'
+          }}>
+            <Typography variant="h5" fontWeight="700" gutterBottom>Akademik Takvim</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.9, mb: 3 }}>
+              Ders programınız ve sınav tarihlerinizi yakında buradan takip edebileceksiniz.
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: 'white',
+                color: '#6366f1',
+                fontWeight: 'bold',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' }
+              }}
+            >
+              Takvimi Görüntüle
+            </Button>
+          </Paper>
         </Grid>
       </Grid>
     </Layout>

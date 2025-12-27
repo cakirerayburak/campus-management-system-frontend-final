@@ -144,7 +144,11 @@ const AuditLogs = () => {
     };
 
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleString('tr-TR', {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '-';
+
+        return date.toLocaleString('tr-TR', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -292,7 +296,7 @@ const AuditLogs = () => {
                                     <TableRow key={log.id} hover>
                                         <TableCell>
                                             <Typography variant="body2">
-                                                {formatDate(log.created_at)}
+                                                {formatDate(log.createdAt || log.created_at)}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -319,11 +323,9 @@ const AuditLogs = () => {
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            {log.entity_type && (
-                                                <Typography variant="body2">
-                                                    {log.entity_type}
-                                                </Typography>
-                                            )}
+                                            <Typography variant="body2">
+                                                {log.entity_type || '-'}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontFamily="monospace">
@@ -386,7 +388,7 @@ const AuditLogs = () => {
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
                                 <Typography variant="subtitle2" color="text.secondary">Tarih</Typography>
-                                <Typography>{formatDate(selectedLog.created_at)}</Typography>
+                                <Typography>{formatDate(selectedLog.createdAt || selectedLog.created_at)}</Typography>
                             </Grid>
                             <Grid item xs={6}>
                                 <Typography variant="subtitle2" color="text.secondary">Kullanıcı</Typography>

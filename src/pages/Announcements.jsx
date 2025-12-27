@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { 
-  Typography, Paper, Grid, Box, Chip, Button, IconButton, 
+import {
+  Typography, Paper, Grid, Box, Chip, Button, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem,
   CircularProgress, Alert, Card, CardContent, CardActions
 } from '@mui/material';
@@ -72,9 +72,9 @@ const Announcements = () => {
           Duyurular
         </Typography>
         {user?.role === 'admin' && (
-          <Button 
-            variant="contained" 
-            startIcon={<AddIcon />} 
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
             onClick={() => setOpen(true)}
             disableElevation
           >
@@ -89,10 +89,10 @@ const Announcements = () => {
         <Grid container spacing={3}>
           {announcements.map((ann) => (
             <Grid item xs={12} key={ann.id}>
-              <Card sx={{ 
-                borderRadius: 2, 
+              <Card sx={{
+                borderRadius: 2,
                 borderLeft: ann.priority === 'high' ? '6px solid #d32f2f' : '6px solid #1976d2',
-                boxShadow: 2 
+                boxShadow: 2
               }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
@@ -104,19 +104,19 @@ const Announcements = () => {
                       {ann.priority === 'high' && <Chip label="ÖNEMLİ" color="error" size="small" />}
                     </Box>
                     <Typography variant="caption" color="text.secondary">
-                      {new Date(ann.created_at).toLocaleDateString('tr-TR')}
+                      {new Date(ann.createdAt).toLocaleDateString('tr-TR')}
                     </Typography>
                   </Box>
-                  
+
                   <Typography variant="body1" sx={{ mt: 2, whiteSpace: 'pre-line' }}>
                     {ann.content}
                   </Typography>
 
                   <Box sx={{ mt: 2 }}>
-                    <Chip 
-                      label={ann.target_role === 'all' ? 'Genel' : ann.target_role === 'student' ? 'Öğrenciler' : 'Akademik'} 
-                      size="small" 
-                      variant="outlined" 
+                    <Chip
+                      label={ann.target_role === 'all' ? 'Genel' : ann.target_role === 'student' ? 'Öğrenciler' : 'Akademik'}
+                      size="small"
+                      variant="outlined"
                       sx={{ fontSize: '0.75rem' }}
                     />
                   </Box>
@@ -145,7 +145,7 @@ const Announcements = () => {
                 label="Başlık"
                 fullWidth
                 value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
             </Grid>
             <Grid item xs={6}>
@@ -154,7 +154,7 @@ const Announcements = () => {
                 label="Hedef Kitle"
                 fullWidth
                 value={formData.target_role}
-                onChange={(e) => setFormData({...formData, target_role: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, target_role: e.target.value })}
               >
                 <MenuItem value="all">Herkes</MenuItem>
                 <MenuItem value="student">Öğrenciler</MenuItem>
@@ -167,7 +167,7 @@ const Announcements = () => {
                 label="Önem Derecesi"
                 fullWidth
                 value={formData.priority}
-                onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
               >
                 <MenuItem value="normal">Normal</MenuItem>
                 <MenuItem value="high">Yüksek (Acil)</MenuItem>
@@ -180,7 +180,7 @@ const Announcements = () => {
                 multiline
                 rows={4}
                 value={formData.content}
-                onChange={(e) => setFormData({...formData, content: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               />
             </Grid>
           </Grid>

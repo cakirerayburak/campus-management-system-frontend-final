@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { 
-  Typography, Paper, Table, TableBody, TableCell, TableContainer, 
+import {
+  Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Chip, Box, CircularProgress, Alert, Grid, Divider
 } from '@mui/material';
 import Layout from '../components/Layout';
@@ -17,7 +17,7 @@ const MyAttendance = () => {
       try {
         const res = await api.get('/attendance/my-attendance');
         // Backend'den { stats: [...], history: [...] } dönüyor
-        setData(res.data.data); 
+        setData(res.data.data);
       } catch (error) {
         console.error("Yoklama verisi çekilemedi", error);
       } finally {
@@ -56,9 +56,9 @@ const MyAttendance = () => {
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#1565c0' }}>
         Ders Bazlı İstatistikler
       </Typography>
-      
+
       {data.stats.length === 0 ? (
-         <Alert severity="info" sx={{ mb: 4 }}>Henüz kayıtlı olduğunuz bir ders bulunmuyor.</Alert>
+        <Alert severity="info" sx={{ mb: 4 }}>Henüz kayıtlı olduğunuz bir ders bulunmuyor.</Alert>
       ) : (
         <TableContainer component={Paper} sx={{ mb: 6, boxShadow: 2 }}>
           <Table>
@@ -85,9 +85,9 @@ const MyAttendance = () => {
                     <TableCell align="center" sx={{ color: 'red', fontWeight: 'bold' }}>{stat.missedSessions}</TableCell>
                     <TableCell align="center">
                       <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                        <CircularProgress 
-                          variant="determinate" 
-                          value={parseFloat(stat.attendanceRate)} 
+                        <CircularProgress
+                          variant="determinate"
+                          value={parseFloat(stat.attendanceRate)}
                           color={parseFloat(stat.absenceRate) > 20 ? "warning" : "primary"}
                           size={40}
                         />
@@ -105,14 +105,14 @@ const MyAttendance = () => {
                       </Box>
                     </TableCell>
                     <TableCell align="center">
-                      <Chip 
-                        label={status.label} 
-                        sx={{ 
-                          bgcolor: 'white', 
-                          color: status.text, 
+                      <Chip
+                        label={status.label}
+                        sx={{
+                          bgcolor: 'white',
+                          color: status.text,
                           fontWeight: 'bold',
                           border: `1px solid ${status.text}`
-                        }} 
+                        }}
                       />
                     </TableCell>
                   </TableRow>
@@ -158,11 +158,11 @@ const MyAttendance = () => {
                       <TableCell>{new Date(record.check_in_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</TableCell>
                       <TableCell>{Math.round(record.distance_from_center)}m</TableCell>
                       <TableCell>
-                        <Chip 
-                          label={record.is_flagged ? "Şüpheli" : "Başarılı"} 
-                          color={record.is_flagged ? "warning" : "success"} 
-                          size="small" 
-                          variant="filled" 
+                        <Chip
+                          label={record.is_flagged ? "Şüpheli" : "Başarılı"}
+                          color={record.is_flagged ? "warning" : "success"}
+                          size="small"
+                          variant="filled"
                         />
                       </TableCell>
                     </TableRow>

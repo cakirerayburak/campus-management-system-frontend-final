@@ -355,7 +355,7 @@ const Notifications = () => {
                                                     {notification.message}
                                                 </Typography>
                                                 <Typography variant="caption" color="text.disabled" sx={{ mt: 1, display: 'block' }}>
-                                                    {formatDate(notification.created_at)}
+                                                    {formatDate(notification.createdAt)}
                                                 </Typography>
                                             </Box>
                                         }
