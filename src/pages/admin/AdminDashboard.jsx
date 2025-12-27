@@ -8,8 +8,6 @@ import {
     CardContent,
     CircularProgress,
     Alert,
-    Chip,
-    Divider,
     Tab,
     Tabs,
     IconButton,
@@ -21,12 +19,9 @@ import {
     School as SchoolIcon,
     Event as EventIcon,
     Restaurant as MealIcon,
-    AccessTime as AttendanceIcon,
-    TrendingUp as TrendingUpIcon,
-    AccountBalanceWallet as WalletIcon,
-    Domain as ClassroomIcon,
     Warning as WarningIcon,
-    Refresh as RefreshIcon
+    Refresh as RefreshIcon,
+    CheckCircle as SuccessIcon
 } from '@mui/icons-material';
 import {
     BarChart,
