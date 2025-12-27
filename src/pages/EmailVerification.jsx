@@ -4,6 +4,7 @@ import { Container, Box, Typography, CircularProgress, Alert } from '@mui/materi
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import api from '../services/api'; // Axios instance'ımız
+import { toast } from 'react-toastify';
 
 const EmailVerification = () => {
   const { token } = useParams(); // URL'den token'ı al
@@ -20,6 +21,7 @@ const EmailVerification = () => {
         
         setStatus('success');
         setMessage('E-posta başarıyla doğrulandı! Giriş sayfasına yönlendiriliyorsunuz...');
+        toast.success('E-posta adresiniz başarıyla doğrulandı!');
         
         // 3 saniye sonra Login'e at
         setTimeout(() => {
@@ -28,7 +30,9 @@ const EmailVerification = () => {
 
       } catch (error) {
         setStatus('error');
-        setMessage(error.response?.data?.error || 'Doğrulama başarısız. Token geçersiz veya süresi dolmuş.');
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Doğrulama başarısız. Token geçersiz veya süresi dolmuş.';
+        setMessage(errorMessage);
+        toast.error(errorMessage);
       }
     };
 
@@ -37,6 +41,7 @@ const EmailVerification = () => {
     } else {
       setStatus('error');
       setMessage('Doğrulama kodu bulunamadı.');
+      toast.error('Doğrulama kodu bulunamadı.');
     }
   }, [token, navigate]);
 

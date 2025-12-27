@@ -35,10 +35,11 @@ const ExcuseApproval = () => {
   const handleUpdateStatus = async (id, status) => {
     try {
       await api.put(`/attendance/excuse-requests/${id}`, { status });
-      toast.success(`Talep ${status === 'approved' ? 'onaylandı' : 'reddedildi'}.`);
+      toast.success(`Mazeret talebi başarıyla ${status === 'approved' ? 'onaylandı' : 'reddedildi'}!`);
       fetchRequests(); // Listeyi yenile
     } catch (error) {
-      toast.error("İşlem başarısız.");
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Mazeret talebi güncellenirken bir hata oluştu.';
+      toast.error(errorMessage);
     }
   };
 

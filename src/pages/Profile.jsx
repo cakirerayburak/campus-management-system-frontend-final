@@ -37,9 +37,10 @@ const Profile = () => {
     e.preventDefault();
     try {
       const res = await api.put('/users/me', formData);
-      toast.success('Profil güncellendi.');
+      toast.success('Profil bilgileriniz başarıyla güncellendi!');
     } catch (error) {
-      toast.error('Güncelleme başarısız.');
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Profil güncellenirken bir hata oluştu.';
+      toast.error(errorMessage);
     }
   };
 
@@ -64,6 +65,19 @@ const Profile = () => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    // Dosya boyutu kontrolü (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Dosya boyutu 5MB\'dan küçük olmalıdır.');
+      return;
+    }
+    
+    // Dosya türü kontrolü
+    if (!file.type.startsWith('image/')) {
+      toast.error('Lütfen geçerli bir resim dosyası seçin.');
+      return;
+    }
+    
     const uploadData = new FormData();
     uploadData.append('profile_image', file);
     try {
@@ -71,9 +85,10 @@ const Profile = () => {
       const newUrl = res.data.data.profilePictureUrl;
       setProfileData((prev) => ({ ...prev, profile_picture_url: newUrl }));
       setUser((prevUser) => ({ ...prevUser, profile_picture_url: newUrl }));
-      toast.success('Fotoğraf yüklendi.');
+      toast.success('Profil fotoğrafınız başarıyla güncellendi!');
     } catch (error) {
-      toast.error('Hata oluştu.');
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Fotoğraf yüklenirken bir hata oluştu.';
+      toast.error(errorMessage);
     }
   };
 

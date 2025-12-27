@@ -9,6 +9,7 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import Layout from '../components/Layout';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const MyCourses = () => {
   const { user } = useAuth();
@@ -23,6 +24,7 @@ const MyCourses = () => {
         setCourses(res.data.data);
       } catch (error) {
         console.error("Dersler yüklenemedi", error);
+        toast.error(error.response?.data?.error || error.response?.data?.message || 'Dersleriniz yüklenirken bir hata oluştu.');
       } finally {
         setLoading(false);
       }

@@ -21,9 +21,12 @@ const ResetPassword = () => {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         await api.put(`/auth/reset-password/${token}`, { password: values.password });
-        toast.success('Şifre güncellendi.'); navigate('/login');
+        toast.success('Şifreniz başarıyla güncellendi! Giriş sayfasına yönlendiriliyorsunuz...');
+        navigate('/login');
       } catch (err) {
-        setError('Token geçersiz.'); toast.error('Hata.');
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Şifre sıfırlama başarısız. Token geçersiz veya süresi dolmuş olabilir.';
+        setError(errorMessage);
+        toast.error(errorMessage);
       } finally {
         setSubmitting(false);
       }

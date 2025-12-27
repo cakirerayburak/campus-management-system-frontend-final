@@ -19,9 +19,12 @@ const ForgotPassword = () => {
       setMessage(''); setError('');
       try {
         await api.post('/auth/forgot-password', { email: values.email });
-        setMessage('Bağlantı gönderildi.'); toast.success('Gönderildi.');
+        setMessage('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.');
+        toast.success('Şifre sıfırlama bağlantısı gönderildi!');
       } catch (err) {
-        setError(err.response?.data?.error || 'Hata.'); toast.error('Hata.');
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Şifre sıfırlama isteği gönderilemedi.';
+        setError(errorMessage);
+        toast.error(errorMessage);
       } finally {
         setSubmitting(false);
       }
