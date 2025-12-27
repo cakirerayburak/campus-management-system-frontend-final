@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { 
-  Typography, Paper, Box, Button, CircularProgress, Alert, TextField, 
-  Container 
+import {
+  Typography, Paper, Box, Button, CircularProgress, Alert, TextField,
+  Container
 } from '@mui/material';
 import { Scanner } from '@yudiel/react-qr-scanner'; // Yeni kütüphane
 import Layout from '../components/Layout';
@@ -22,17 +22,16 @@ const StudentAttendance = () => {
         // QR kodun içindeki JSON verisini çözümle
         // Format: { sessionId: 1, code: "xyz..." }
         const parsedData = JSON.parse(text);
-        
+
         // Tarayıcıyı durdur ve işleme başla
-        setIsScanning(false); 
+        setIsScanning(false);
         toast.info("QR Kod algılandı, konum alınıyor...");
-        
-        // Yoklama işlemine başla
-        submitAttendance(parsedData.sessionId);
+
+        // Yoklama işlemine başla (KODU BEKLETİYORUZ)
+        // parsedData.code -> QR kod stringi
+        submitAttendance(parsedData.sessionId, parsedData.code);
       } catch (error) {
         console.error("QR Parse Hatası:", error);
-        // Hatalı format olsa bile kullanıcıyı baymamak için toast göstermiyoruz,
-        // sadece konsola yazıyoruz. Doğru QR gelene kadar taramaya devam eder.
       }
     }
   };
@@ -45,11 +44,18 @@ const StudentAttendance = () => {
   // Manuel ID ile gönderim
   const handleManualSubmit = () => {
     if (!manualId) return;
-    setIsScanning(false); // Manuel gönderimde kamerayı durdurabiliriz
-    submitAttendance(manualId);
+    setIsScanning(false);
+    // Manuelde QR kod yok, o yüzden kod kısmını boş yolluyoruz veya
+    // Backend "manuel girenler için" ayrı bir opsiyon sunmalı.
+    // Ancak güvenlik gereği user "qr kod değişmeli" dedi, yani QR şart.
+    // Manuel girişi desteklemek istiyorsak, ekranda o anki kodu da göstermemiz lazım.
+    // Mevcut yapıda manuel giriş QR bypass demek, bu da yeni güvenliği kırar.
+    // Şimdilik manuel girişi deaktif ediyoruz veya backend hata verir.
+    // Ancak user talebi "QR kod" üzerine olduğu için, manuel girişte kod gönderemeyince hata alması normaldir.
+    submitAttendance(manualId, null);
   };
 
-  const submitAttendance = (sessionId) => {
+  const submitAttendance = (sessionId, qrCodeStr) => {
     setLoading(true);
     setStatusMessage("Konum alınıyor (Lütfen bekleyin)...");
 
@@ -67,18 +73,17 @@ const StudentAttendance = () => {
         try {
           const res = await api.post(`/attendance/sessions/${sessionId}/checkin`, {
             latitude,
-            longitude
+            longitude,
+            qr_code: qrCodeStr // QR kod stringini de gönderiyoruz
           });
 
           setStatusMessage("");
           toast.success(res.data.message);
-          // Başarılı olduktan sonra tekrar taramaya gerek yok
         } catch (error) {
           const errMsg = error.response?.data?.error || "Yoklama işlemi başarısız.";
           setStatusMessage(errMsg);
           toast.error(errMsg);
-          
-          // Hata durumunda tekrar taramaya izin ver
+
           setTimeout(() => setIsScanning(true), 2000);
         } finally {
           setLoading(false);
@@ -90,17 +95,16 @@ const StudentAttendance = () => {
         if (error.code === 1) msg = "Lütfen tarayıcıdan konum izni verin.";
         else if (error.code === 2) msg = "Konum bulunamadı. GPS sinyali zayıf.";
         else if (error.code === 3) msg = "Konum alma süresi doldu. Lütfen tekrar deneyin.";
-        
+
         setStatusMessage(msg);
         toast.error(msg);
         setLoading(false);
-        // Konum hatasında tekrar taramaya izin ver
         setIsScanning(true);
       },
-      { 
-        enableHighAccuracy: true, 
-        timeout: 20000, // 20 Saniye bekle (Artırıldı)
-        maximumAge: 0 
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
       }
     );
   };
@@ -126,15 +130,15 @@ const StudentAttendance = () => {
               <Typography variant="body1" gutterBottom sx={{ mb: 2 }}>
                 Lütfen öğretim üyesinin ekranındaki QR kodu okutun.
               </Typography>
-              
+
               {/* QR Scanner Alanı */}
-              <Box sx={{ 
-                mx: 'auto', 
-                maxWidth: 350, 
-                border: '1px solid #ddd', 
-                borderRadius: 2, 
+              <Box sx={{
+                mx: 'auto',
+                maxWidth: 350,
+                border: '1px solid #ddd',
+                borderRadius: 2,
                 overflow: 'hidden',
-                mb: 3 
+                mb: 3
               }}>
                 {isScanning && (
                   <Scanner
@@ -170,9 +174,9 @@ const StudentAttendance = () => {
               </Typography>
 
               <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                <TextField 
-                  label="Oturum ID" 
-                  size="small" 
+                <TextField
+                  label="Oturum ID"
+                  size="small"
                   value={manualId}
                   onChange={(e) => setManualId(e.target.value)}
                   placeholder="ID giriniz..."

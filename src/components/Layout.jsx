@@ -97,7 +97,8 @@ const Layout = ({ children }) => {
         { text: 'Yoklama Başlat', icon: <QrCodeIcon />, path: '/attendance/faculty' },
         { text: 'Raporlar', icon: <AssessmentIcon />, path: '/attendance/reports' },
         { text: 'Not Girişi', icon: <GradeIcon />, path: '/grades/gradebook' },
-        { text: 'Mazeret Onayı', icon: <SickIcon />, path: '/attendance/excuse-approval' }
+        { text: 'Mazeret Onayı', icon: <SickIcon />, path: '/attendance/excuse-approval' },
+        { text: 'Etkinliklerim', icon: <ConfirmationNumberIcon />, path: '/my-events' }
       );
     }
 

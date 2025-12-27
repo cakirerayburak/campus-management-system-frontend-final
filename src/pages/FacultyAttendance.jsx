@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { 
-  Typography, Paper, Grid, Box, Button, TextField, MenuItem, 
-  CircularProgress, Alert, Card, CardContent 
+import {
+  Typography, Paper, Grid, Box, Button, TextField, MenuItem,
+  CircularProgress, Alert, Card, CardContent
 } from '@mui/material';
 import { QRCodeSVG } from 'qrcode.react';
 import Layout from '../components/Layout';
@@ -29,16 +29,16 @@ const FacultyAttendance = () => {
       try {
         setLoading(true); // Yükleniyor...
         const res = await api.get('/sections');
-        
+
         // Hoca ise sadece kendi dersleri, Admin ise hepsi
         let mySections = res.data.data;
-        
+
         if (user.role === 'faculty' && user.facultyProfile) {
           mySections = mySections.filter(
             sec => sec.instructorId === user.facultyProfile.id
           );
         }
-        
+
         setSections(mySections);
       } catch (error) {
         console.error("Şubeler yüklenemedi", error);
@@ -76,6 +76,25 @@ const FacultyAttendance = () => {
     checkActiveSession();
   }, [selectedSection]);
 
+  // 3. QR Kodunu Her 5 Saniyede Bir Yenile
+  useEffect(() => {
+    let interval;
+    if (activeSession && activeSession.status === 'active') {
+      interval = setInterval(async () => {
+        try {
+          const res = await api.put(`/attendance/sessions/${activeSession.id}/refresh-qr`);
+          const newCode = res.data.data.qr_code;
+
+          setActiveSession(prev => ({ ...prev, qr_code: newCode }));
+        } catch (error) {
+          console.error("QR yenileme hatası:", error);
+          // Hata olsa da devam etsin, belki internet gitti geldi
+        }
+      }, 5000);
+    }
+    return () => clearInterval(interval);
+  }, [activeSession?.id, activeSession?.status]);
+
   const handleStartSession = async () => {
     if (!selectedSection) {
       toast.warning("Lütfen bir ders şubesi seçin.");
@@ -88,7 +107,7 @@ const FacultyAttendance = () => {
       return;
     }
 
-    setLoading(true); 
+    setLoading(true);
 
     // 2. Konumu Al ve İsteği Gönder (BURASI KRİTİK)
     navigator.geolocation.getCurrentPosition(
@@ -103,7 +122,7 @@ const FacultyAttendance = () => {
             latitude,  // Koordinatları backend'e gönderiyoruz
             longitude
           });
-          
+
           setActiveSession(res.data.data);
           toast.success("Konumunuz referans alınarak yoklama başlatıldı!");
         } catch (error) {
@@ -118,7 +137,7 @@ const FacultyAttendance = () => {
         if (error.code === 1) msg = "Lütfen tarayıcıdan konum izni verin.";
         else if (error.code === 2) msg = "Konum bulunamadı.";
         else if (error.code === 3) msg = "Konum zaman aşımı.";
-        
+
         toast.error(msg);
         setLoading(false);
       },
@@ -156,7 +175,7 @@ const FacultyAttendance = () => {
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3, borderRadius: 0, borderTop: '4px solid #1976d2' }}>
             <Typography variant="h6" gutterBottom>Oturum Ayarları</Typography>
-            
+
             <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
               <TextField
                 select
@@ -164,7 +183,7 @@ const FacultyAttendance = () => {
                 value={selectedSection}
                 onChange={(e) => setSelectedSection(e.target.value)}
                 fullWidth
-                disabled={!!activeSession} 
+                disabled={!!activeSession}
               >
                 {sections.length > 0 ? (
                   sections.map((sec) => (
@@ -197,9 +216,9 @@ const FacultyAttendance = () => {
               />
 
               {!activeSession ? (
-                <Button 
-                  variant="contained" 
-                  size="large" 
+                <Button
+                  variant="contained"
+                  size="large"
                   onClick={handleStartSession}
                   disabled={!selectedSection}
                   disableElevation
@@ -208,10 +227,10 @@ const FacultyAttendance = () => {
                   Yoklamayı Başlat
                 </Button>
               ) : (
-                <Button 
-                  variant="outlined" 
-                  color="error" 
-                  size="large" 
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="large"
                   onClick={handleCloseSession}
                   sx={{ borderRadius: 0 }}
                 >
@@ -233,14 +252,14 @@ const FacultyAttendance = () => {
                 <Typography variant="body1" sx={{ mb: 3 }}>
                   Öğrenciler QR kodu okutarak yoklama verebilirler.
                 </Typography>
-                
+
                 <Box sx={{ p: 2, bgcolor: 'white', display: 'inline-block', borderRadius: 2 }}>
-                  <QRCodeSVG 
+                  <QRCodeSVG
                     value={JSON.stringify({
                       sessionId: activeSession.id,
                       code: activeSession.qr_code
-                    })} 
-                    size={200} 
+                    })}
+                    size={200}
                   />
                 </Box>
 
