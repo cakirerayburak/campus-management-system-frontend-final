@@ -194,7 +194,20 @@ const Register = () => {
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox name="terms" checked={formik.values.terms} onChange={formik.handleChange} color="primary" />}
-                  label={<Typography variant="body2">Kullanım koşullarını okudum ve kabul ediyorum.</Typography>}
+                  label={
+                    <Typography variant="body2">
+                      <MuiLink
+                        component={Link}
+                        to="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ fontWeight: 'bold', textDecoration: 'none', color: 'primary.main' }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Kullanım koşullarını
+                      </MuiLink> okudum ve kabul ediyorum.
+                    </Typography>
+                  }
                 />
                 {formik.touched.terms && formik.errors.terms && <Typography variant="caption" color="error" display="block">{formik.errors.terms}</Typography>}
               </Grid>

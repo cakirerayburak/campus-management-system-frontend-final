@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { 
-  Typography, Paper, Box, TextField, MenuItem, Button, 
-  Table, TableBody, TableCell, TableHead, TableRow, 
-  CircularProgress, Alert, Chip 
+import {
+  Typography, Paper, Box, TextField, MenuItem, Button,
+  Table, TableBody, TableCell, TableHead, TableRow,
+  CircularProgress, Alert, Chip
 } from '@mui/material';
 import Layout from '../components/Layout';
 import api from '../services/api';
@@ -45,7 +45,7 @@ const Gradebook = () => {
       } catch (error) {
         console.error("Öğrenci listesi alınamadı", error);
         toast.error(error.response?.data?.error || 'Öğrenci listesi yüklenemedi');
-        setStudents([]); 
+        setStudents([]);
       } finally {
         setLoading(false);
       }
@@ -55,7 +55,7 @@ const Gradebook = () => {
   }, [selectedSection]);
 
   const handleGradeChange = (enrollmentId, field, value) => {
-    setStudents(prev => prev.map(stu => 
+    setStudents(prev => prev.map(stu =>
       stu.id === enrollmentId ? { ...stu, [field]: value } : stu
     ));
   };
@@ -139,20 +139,20 @@ const Gradebook = () => {
                         <TableCell>{enrollment.student?.user?.name || '-'}</TableCell>
                         <TableCell>{enrollment.student?.user?.email || '-'}</TableCell>
                         <TableCell>
-                          <TextField 
-                            type="number" 
-                            size="small" 
+                          <TextField
+                            type="number"
+                            size="small"
                             variant="outlined"
-                            value={enrollment.midterm_grade || ''} 
+                            value={enrollment.midterm_grade || ''}
                             onChange={(e) => handleGradeChange(enrollment.id, 'midterm_grade', e.target.value)}
                             sx={{ width: 80 }}
                             inputProps={{ min: 0, max: 100, step: 0.01 }}
                           />
                         </TableCell>
                         <TableCell>
-                          <TextField 
-                            type="number" 
-                            size="small" 
+                          <TextField
+                            type="number"
+                            size="small"
                             variant="outlined"
                             value={enrollment.final_grade || ''}
                             onChange={(e) => handleGradeChange(enrollment.id, 'final_grade', e.target.value)}
@@ -162,17 +162,17 @@ const Gradebook = () => {
                         </TableCell>
                         <TableCell>
                           {enrollment.letter_grade ? (
-                            <Chip 
-                              label={enrollment.letter_grade} 
-                              size="small" 
-                              color={enrollment.status === 'failed' ? 'error' : 'success'} 
+                            <Chip
+                              label={enrollment.letter_grade}
+                              size="small"
+                              color={enrollment.status === 'failed' ? 'error' : 'success'}
                             />
                           ) : (
                             <Typography variant="body2" color="text.secondary">-</Typography>
                           )}
                         </TableCell>
                         <TableCell>
-                          <Chip 
+                          <Chip
                             label={enrollment.status === 'enrolled' ? 'Devam Ediyor' : enrollment.status}
                             size="small"
                             color={enrollment.status === 'enrolled' ? 'primary' : 'default'}
@@ -180,9 +180,9 @@ const Gradebook = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          <Button 
-                            size="small" 
-                            variant="contained" 
+                          <Button
+                            size="small"
+                            variant="contained"
                             onClick={() => handleSave(enrollment.id)}
                             disabled={!enrollment.midterm_grade && !enrollment.final_grade}
                           >

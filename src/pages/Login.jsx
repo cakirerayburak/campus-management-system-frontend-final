@@ -29,6 +29,8 @@ const Login = () => {
   const formik = useFormik({
     initialValues: { email: '', password: '' },
     validationSchema: validationSchema,
+    validateOnBlur: false, // Tıklama sırasında layout kaymasını önlemek için blur validasyonunu kapatıyoruz
+    validateOnChange: true,
     onSubmit: async (values, { setSubmitting }) => {
       setError('');
       try {
@@ -136,17 +138,23 @@ const Login = () => {
               {formik.isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Giriş Yap'}
             </Button>
 
-            <Grid container justifyContent="center">
-              <Grid item>
-                <Typography variant="body2" color="text.secondary">
-                  Hesabınız yok mu?{' '}
-                  <MuiLink component={Link} to="/register" variant="body2" sx={{ fontWeight: 600, textDecoration: 'none', color: 'primary.main' }}>
-                    Kayıt Ol
-                  </MuiLink>
-                </Typography>
-              </Grid>
-            </Grid>
           </Box>
+
+          <Grid container justifyContent="center">
+            <Grid item>
+              <Typography variant="body2" color="text.secondary">
+                Hesabınız yok mu?{' '}
+                <MuiLink component={Link} to="/register" variant="body2" sx={{ fontWeight: 600, textDecoration: 'none', color: 'primary.main' }}>
+                  Kayıt Ol
+                </MuiLink>
+              </Typography>
+            </Grid>
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <MuiLink component={Link} to="/terms" variant="caption" color="text.secondary" underline="hover">
+                Kullanım Koşulları
+              </MuiLink>
+            </Box>
+          </Grid>
         </Paper>
       </Container>
     </Box>

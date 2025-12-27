@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { 
-  Typography, Paper, Box, TextField, MenuItem, 
+import {
+  Typography, Paper, Box, TextField, MenuItem,
   CircularProgress, Alert, Accordion, AccordionSummary, AccordionDetails,
-  Table, TableBody, TableCell, TableHead, TableRow, Chip, 
+  Table, TableBody, TableCell, TableHead, TableRow, Chip,
   Tooltip, IconButton, Button // Button eklendi
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -48,7 +48,7 @@ const AttendanceReport = () => {
   // 2. Raporu Getir
   const fetchReport = async () => {
     if (!selectedSection) return;
-    
+
     setLoading(true);
     try {
       const res = await api.get(`/attendance/report/${selectedSection}`);
@@ -78,12 +78,12 @@ const AttendanceReport = () => {
 
     sessions.forEach(session => {
       const dateStr = new Date(session.date).toLocaleDateString('tr-TR');
-      
+
       if (session.records.length === 0) {
         // Katılımcı olmayan oturumları da raporda göster (İsteğe bağlı)
         excelData.push({
           'Tarih': dateStr,
-          'Saat': `${session.start_time?.slice(0,5)} - ${session.end_time?.slice(0,5)}`,
+          'Saat': `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`,
           'Öğrenci No': '-',
           'Ad Soyad': '-',
           'Giriş Saati': '-',
@@ -94,7 +94,7 @@ const AttendanceReport = () => {
         session.records.forEach(record => {
           excelData.push({
             'Tarih': dateStr,
-            'Saat': `${session.start_time?.slice(0,5)} - ${session.end_time?.slice(0,5)}`,
+            'Saat': `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`,
             'Öğrenci No': record.student?.student_number || 'Belirsiz',
             'Ad Soyad': record.student?.user?.name || 'İsimsiz',
             'Giriş Saati': new Date(record.check_in_time).toLocaleTimeString('tr-TR'),
@@ -106,7 +106,7 @@ const AttendanceReport = () => {
     });
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
-    
+
     // Sütun genişlikleri
     worksheet['!cols'] = [
       { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 25 }, { wch: 10 }, { wch: 10 }, { wch: 40 }
@@ -116,7 +116,7 @@ const AttendanceReport = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Yoklama Listesi");
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    
+
     saveAs(dataBlob, `Yoklama_Raporu_Section${selectedSection}_${new Date().toLocaleDateString()}.xlsx`);
     toast.success("Excel dosyası indirildi.");
   };
@@ -127,7 +127,7 @@ const AttendanceReport = () => {
     try {
       await api.put(`/attendance/records/${recordId}`, { action: 'approve' });
       toast.success("Yoklama onaylandı.");
-      fetchReport(); 
+      fetchReport();
     } catch (error) {
       toast.error("İşlem başarısız.");
     }
@@ -139,7 +139,7 @@ const AttendanceReport = () => {
     try {
       await api.delete(`/attendance/records/${recordId}`);
       toast.success("Yoklama reddedildi (silindi).");
-      fetchReport(); 
+      fetchReport();
     } catch (error) {
       toast.error("İşlem başarısız.");
     }
@@ -153,9 +153,9 @@ const AttendanceReport = () => {
           Yoklama Raporları
         </Typography>
 
-        <Button 
-          variant="contained" 
-          color="success" 
+        <Button
+          variant="contained"
+          color="success"
           startIcon={<FileDownloadIcon />}
           onClick={handleExportToExcel}
           disabled={loading || !selectedSection || sessions.length === 0}
@@ -199,11 +199,11 @@ const AttendanceReport = () => {
                   <Typography variant="caption" sx={{ mr: 2 }}>
                     Saat: {session.start_time?.slice(0, 5)} - {session.end_time?.slice(0, 5)}
                   </Typography>
-                  <Chip 
-                    label={`${session.records.length} Öğrenci`} 
-                    color="primary" 
-                    size="small" 
-                    variant="outlined" 
+                  <Chip
+                    label={`${session.records.length} Öğrenci`}
+                    color="primary"
+                    size="small"
+                    variant="outlined"
                   />
                 </Box>
               </Box>
@@ -236,15 +236,15 @@ const AttendanceReport = () => {
                             {record.is_flagged ? (
                               <>
                                 <Tooltip title={record.flag_reason || "Şüpheli İşlem"} arrow placement="top">
-                                  <Chip 
-                                    icon={<InfoIcon />} 
-                                    label="Şüpheli" 
-                                    color="warning" 
-                                    size="small" 
+                                  <Chip
+                                    icon={<InfoIcon />}
+                                    label="Şüpheli"
+                                    color="warning"
+                                    size="small"
                                     sx={{ cursor: 'help' }}
                                   />
                                 </Tooltip>
-                                
+
                                 <Tooltip title="Onayla">
                                   <IconButton size="small" color="success" onClick={() => handleApprove(record.id)}>
                                     <CheckCircleIcon fontSize="small" />

@@ -10,7 +10,7 @@ const Profile = () => {
   const { setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
-  
+
   const [formData, setFormData] = useState({ phone_number: '', address: '', bio: '' });
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
 
@@ -65,19 +65,19 @@ const Profile = () => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     // Dosya boyutu kontrolü (5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Dosya boyutu 5MB\'dan küçük olmalıdır.');
       return;
     }
-    
+
     // Dosya türü kontrolü
     if (!file.type.startsWith('image/')) {
       toast.error('Lütfen geçerli bir resim dosyası seçin.');
       return;
     }
-    
+
     const uploadData = new FormData();
     uploadData.append('profile_image', file);
     try {
@@ -97,8 +97,8 @@ const Profile = () => {
 
   return (
     <Layout>
-      <Paper sx={{ 
-        p: 4, maxWidth: 900, mx: 'auto', 
+      <Paper sx={{
+        p: 4, maxWidth: 900, mx: 'auto',
         borderRadius: 0, boxShadow: 'none', border: '1px solid #e0e0e0' // FLAT
       }}>
         <Grid container spacing={4}>
@@ -107,7 +107,7 @@ const Profile = () => {
               <Avatar
                 variant="rounded" // Köşeliye yakın
                 src={profileData.profile_picture_url || null}
-                sx={{ width: 140, height: 140, mb: 2, mx: 'auto', borderRadius: 2 }} 
+                sx={{ width: 140, height: 140, mb: 2, mx: 'auto', borderRadius: 2 }}
               />
               <IconButton color="primary" component="label" sx={{ position: 'absolute', bottom: -10, right: -10, bgcolor: 'white', border: '1px solid #ddd', borderRadius: 1 }}>
                 <input hidden accept="image/*" type="file" onChange={handleImageUpload} />
@@ -125,9 +125,9 @@ const Profile = () => {
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#2c3e50' }}>Bilgiler</Typography>
             <Box component="form" onSubmit={handleUpdate} sx={{ mb: 5 }}>
               <Grid container spacing={2}>
-                <Grid item xs={12}><TextField fullWidth label="Telefon" value={formData.phone_number} onChange={(e) => setFormData({...formData, phone_number: e.target.value})} size="small" /></Grid>
-                <Grid item xs={12}><TextField fullWidth label="Adres" multiline rows={2} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} size="small" /></Grid>
-                <Grid item xs={12}><TextField fullWidth label="Biyografi" multiline rows={3} value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} size="small" /></Grid>
+                <Grid item xs={12}><TextField fullWidth label="Telefon" value={formData.phone_number} onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })} size="small" /></Grid>
+                <Grid item xs={12}><TextField fullWidth label="Adres" multiline rows={2} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} size="small" /></Grid>
+                <Grid item xs={12}><TextField fullWidth label="Biyografi" multiline rows={3} value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} size="small" /></Grid>
                 <Grid item xs={12}><Button variant="contained" disableElevation type="submit" sx={{ borderRadius: 0, textTransform: 'none' }}>Değişiklikleri Kaydet</Button></Grid>
               </Grid>
             </Box>
@@ -136,9 +136,9 @@ const Profile = () => {
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#2c3e50' }}>Güvenlik</Typography>
             <Box component="form" onSubmit={handleChangePassword}>
               <Grid container spacing={2}>
-                <Grid item xs={12}><TextField fullWidth type="password" label="Mevcut Şifre" value={passwordData.currentPassword} onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})} size="small" /></Grid>
-                <Grid item xs={12} sm={6}><TextField fullWidth type="password" label="Yeni Şifre" value={passwordData.newPassword} onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})} size="small" /></Grid>
-                <Grid item xs={12} sm={6}><TextField fullWidth type="password" label="Tekrar" value={passwordData.confirmNewPassword} onChange={(e) => setPasswordData({...passwordData, confirmNewPassword: e.target.value})} size="small" /></Grid>
+                <Grid item xs={12}><TextField fullWidth type="password" label="Mevcut Şifre" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} size="small" /></Grid>
+                <Grid item xs={12} sm={6}><TextField fullWidth type="password" label="Yeni Şifre" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} size="small" /></Grid>
+                <Grid item xs={12} sm={6}><TextField fullWidth type="password" label="Tekrar" value={passwordData.confirmNewPassword} onChange={(e) => setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })} size="small" /></Grid>
                 <Grid item xs={12}><Button variant="outlined" color="error" type="submit" sx={{ borderRadius: 0, textTransform: 'none' }}>Şifreyi Değiştir</Button></Grid>
               </Grid>
             </Box>

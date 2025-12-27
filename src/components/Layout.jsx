@@ -31,6 +31,7 @@ import BuildIcon from '@mui/icons-material/Build'; // Ekipman için
 import BarChartIcon from '@mui/icons-material/BarChart'; // Raporlar için
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -193,6 +194,10 @@ const Layout = ({ children }) => {
 
       {/* Footer */}
       <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <ListItem button onClick={() => navigate('/terms')} sx={{ borderRadius: 2, color: '#9ca3af', mb: 1, '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' } }}>
+          <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><DescriptionIcon /></ListItemIcon>
+          <ListItemText primary="Kullanım Koşulları" primaryTypographyProps={{ fontSize: '0.9rem' }} />
+        </ListItem>
         <ListItem button onClick={handleLogout} sx={{ borderRadius: 2, color: '#ef4444', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.1)' } }}>
           <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><LogoutIcon /></ListItemIcon>
           <ListItemText primary="Güvenli Çıkış" />

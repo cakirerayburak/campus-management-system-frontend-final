@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Sayfa importları aynen kalsın...
 import Home from './pages/Home';
 import Login from './pages/Login';
+import TermsOfUse from './pages/TermsOfUse';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -61,6 +62,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/terms" element={<TermsOfUse />} />
             <Route path="/verify-email/:token" element={<EmailVerification />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />

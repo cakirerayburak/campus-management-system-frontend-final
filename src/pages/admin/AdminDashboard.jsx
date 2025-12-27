@@ -26,7 +26,6 @@ import {
     AccountBalanceWallet as WalletIcon,
     Domain as ClassroomIcon,
     Warning as WarningIcon,
-    CheckCircle as SuccessIcon,
     Refresh as RefreshIcon
 } from '@mui/icons-material';
 import {
