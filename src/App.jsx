@@ -46,6 +46,7 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import EquipmentManagement from './pages/admin/EquipmentManagement';
 import ResourceUtilization from './pages/admin/ResourceUtilization';
 import DepartmentSchedules from './pages/admin/DepartmentSchedules';
+import DraftSchedules from './pages/admin/DraftSchedules';
 
 const theme = createTheme({
   palette: {
@@ -177,6 +178,7 @@ function App() {
           <Route path="/admin/menus" element={<ProtectedRoute><MenuManagement /></ProtectedRoute>} />
           <Route path="/admin/events" element={<ProtectedRoute><EventManagement /></ProtectedRoute>} />
           <Route path="/admin/scheduling/generate" element={<ProtectedRoute><GenerateSchedule /></ProtectedRoute>} />
+          <Route path="/admin/scheduling/drafts" element={<ProtectedRoute><DraftSchedules /></ProtectedRoute>} />
           <Route path="/admin/schedules/departments" element={<ProtectedRoute><DepartmentSchedules /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
 
