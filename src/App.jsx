@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider } from './context/ThemeContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -51,88 +51,9 @@ import Notifications from './pages/Notifications';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AuditLogs from './pages/admin/AuditLogs';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#4f46e5', // Modern Indigo
-      light: '#818cf8',
-      dark: '#3730a3',
-      contrastText: '#ffffff',
-    },
-    secondary: {
-      main: '#ec4899', // Canlı Pembe (Accent)
-    },
-    background: {
-      default: '#f3f4f6', // Çok açık gri (Soğuk ton)
-      paper: '#ffffff',
-    },
-    text: {
-      primary: '#111827', // Tam siyah değil, koyu gri
-      secondary: '#6b7280',
-    },
-  },
-  shape: {
-    borderRadius: 16, // Daha yuvarlak, modern köşeler
-  },
-  typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h4: { fontWeight: 700, letterSpacing: '-0.02em' },
-    h5: { fontWeight: 600 },
-    h6: { fontWeight: 600 },
-    button: { textTransform: 'none', fontWeight: 600 }, // Büyük harf zorunluluğunu kaldır
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: '12px',
-          boxShadow: 'none',
-          padding: '10px 24px',
-          '&:hover': {
-            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)', // Hoverda soft gölge
-            transform: 'translateY(-1px)', // Hafif yukarı kalkma efekti
-          },
-          transition: 'all 0.2s ease-in-out',
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)', // Tailwind tarzı soft gölge
-          border: '1px solid rgba(229, 231, 235, 0.5)', // Çok hafif border
-        },
-        elevation1: {
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        }
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '12px',
-          }
-        }
-      }
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: '20px',
-          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)',
-        }
-      }
-    }
-  },
-});
-
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeProvider>
       <AuthProvider>
         <Router>
           {/* Rotalar aynı kalıyor... */}

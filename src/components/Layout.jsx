@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem,
   Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Container,
-  CssBaseline, useTheme, useMediaQuery, Divider, Collapse
+  CssBaseline, useTheme, useMediaQuery, Divider, Collapse, Tooltip
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -29,15 +29,19 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import BuildIcon from '@mui/icons-material/Build'; // Ekipman için
 import BarChartIcon from '@mui/icons-material/BarChart'; // Raporlar için
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme as useCustomTheme } from '../context/ThemeContext';
 import NotificationBell from './NotificationBell';
 
 const drawerWidth = 280;
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
+  const { isDarkMode, toggleTheme } = useCustomTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -130,7 +134,7 @@ const Layout = ({ children }) => {
   );
 
   const drawerContent = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#111827', color: 'white' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: isDarkMode ? '#0f172a' : '#111827', color: 'white' }}>
       {/* Sidebar Header */}
       <Box sx={{
         height: 64,
@@ -198,7 +202,7 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: '#f3f4f6', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', bgcolor: theme.palette.background.default, minHeight: '100vh' }}>
       <CssBaseline />
 
       {/* Header (AppBar) */}
@@ -208,9 +212,9 @@ const Layout = ({ children }) => {
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          bgcolor: 'rgba(255,255,255,0.8)',
+          bgcolor: isDarkMode ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255,255,255,0.9)',
           backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(0,0,0,0.05)',
+          borderBottom: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)',
           color: 'text.primary',
           zIndex: (theme) => theme.zIndex.drawer + 1
         }}
@@ -221,6 +225,21 @@ const Layout = ({ children }) => {
           </IconButton>
 
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* Theme Toggle Button */}
+          <Tooltip title={isDarkMode ? 'Açık Mod' : 'Koyu Mod'}>
+            <IconButton
+              onClick={toggleTheme}
+              color="inherit"
+              sx={{
+                mr: 1,
+                transition: 'all 0.3s ease',
+                '&:hover': { transform: 'rotate(180deg)' }
+              }}
+            >
+              {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+          </Tooltip>
 
           {/* Notification Bell */}
           <NotificationBell />
