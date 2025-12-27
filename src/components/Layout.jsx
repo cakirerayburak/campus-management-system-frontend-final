@@ -99,6 +99,8 @@ const Layout = ({ children }) => {
     if (user.role === 'admin') {
       // Admin Yönetim
       menuItems.push(
+        { text: 'Admin Dashboard', icon: <BarChartIcon />, path: '/admin/dashboard' },
+        { text: 'İşlem Logları', icon: <HistoryIcon />, path: '/admin/audit-logs' },
         { text: 'Ders Yönetimi', icon: <SettingsIcon />, path: '/admin/courses' },
         { text: 'Şube & Program', icon: <ClassIcon />, path: '/admin/sections' },
         // Part 3 Yönetim

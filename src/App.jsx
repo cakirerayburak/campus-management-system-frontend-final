@@ -48,6 +48,8 @@ import ResourceUtilization from './pages/admin/ResourceUtilization';
 import DepartmentSchedules from './pages/admin/DepartmentSchedules';
 import DraftSchedules from './pages/admin/DraftSchedules';
 import Notifications from './pages/Notifications';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AuditLogs from './pages/admin/AuditLogs';
 
 const theme = createTheme({
   palette: {
@@ -186,6 +188,8 @@ function App() {
 
             <Route path="/admin/equipment" element={<EquipmentManagement />} />
             <Route path="/admin/reports" element={<ResourceUtilization />} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/audit-logs" element={<ProtectedRoute><AuditLogs /></ProtectedRoute>} />
           </Routes>
         </Router>
         <ToastContainer position="top-right" autoClose={3000} theme="colored" />
