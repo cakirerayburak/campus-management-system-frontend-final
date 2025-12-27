@@ -47,6 +47,7 @@ import EquipmentManagement from './pages/admin/EquipmentManagement';
 import ResourceUtilization from './pages/admin/ResourceUtilization';
 import DepartmentSchedules from './pages/admin/DepartmentSchedules';
 import DraftSchedules from './pages/admin/DraftSchedules';
+import Notifications from './pages/Notifications';
 
 const theme = createTheme({
   palette: {
@@ -102,7 +103,7 @@ const theme = createTheme({
           border: '1px solid rgba(229, 231, 235, 0.5)', // Çok hafif border
         },
         elevation1: {
-           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }
       },
     },
@@ -131,61 +132,62 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-       <Router>
-        {/* Rotalar aynı kalıyor... */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify-email/:token" element={<EmailVerification />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Router>
+          {/* Rotalar aynı kalıyor... */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/verify-email/:token" element={<EmailVerification />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/courses" element={<ProtectedRoute><CourseList /></ProtectedRoute>} />
-          <Route path="/courses/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
-          <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
-          <Route path="/attendance/faculty" element={<ProtectedRoute><FacultyAttendance /></ProtectedRoute>} />
-          <Route path="/attendance/student" element={<ProtectedRoute><StudentAttendance /></ProtectedRoute>} />
-          <Route path="/attendance/my-history" element={<ProtectedRoute><MyAttendance /></ProtectedRoute>} />
-          <Route path="/attendance/reports" element={<ProtectedRoute><AttendanceReport /></ProtectedRoute>} />
-          <Route path="/grades/gradebook" element={<ProtectedRoute><Gradebook /></ProtectedRoute>} />
-          <Route path="/grades/my-grades" element={<ProtectedRoute><MyGrades /></ProtectedRoute>} />
-          <Route path="/attendance/excuse-request" element={<ProtectedRoute><ExcuseRequest /></ProtectedRoute>} />
-          <Route path="/attendance/excuse-approval" element={<ProtectedRoute><ExcuseApproval /></ProtectedRoute>} />
-          <Route path="/admin/courses" element={<ProtectedRoute><AdminCourses /></ProtectedRoute>} />
-          <Route path="/admin/sections" element={<ProtectedRoute><AdminSections /></ProtectedRoute>} />
-          <Route path="/announcements" element={<ProtectedRoute><Announcements /></ProtectedRoute>} />
-          <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
-          <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
-          <Route path="/meals/menu" element={<ProtectedRoute><MealMenu /></ProtectedRoute>} />
-          <Route path="/meals/reservations" element={<ProtectedRoute><MyReservations /></ProtectedRoute>} />
-          <Route path="/schedule" element={<ProtectedRoute><MySchedule /></ProtectedRoute>} />
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/courses" element={<ProtectedRoute><CourseList /></ProtectedRoute>} />
+            <Route path="/courses/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
+            <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
+            <Route path="/attendance/faculty" element={<ProtectedRoute><FacultyAttendance /></ProtectedRoute>} />
+            <Route path="/attendance/student" element={<ProtectedRoute><StudentAttendance /></ProtectedRoute>} />
+            <Route path="/attendance/my-history" element={<ProtectedRoute><MyAttendance /></ProtectedRoute>} />
+            <Route path="/attendance/reports" element={<ProtectedRoute><AttendanceReport /></ProtectedRoute>} />
+            <Route path="/grades/gradebook" element={<ProtectedRoute><Gradebook /></ProtectedRoute>} />
+            <Route path="/grades/my-grades" element={<ProtectedRoute><MyGrades /></ProtectedRoute>} />
+            <Route path="/attendance/excuse-request" element={<ProtectedRoute><ExcuseRequest /></ProtectedRoute>} />
+            <Route path="/attendance/excuse-approval" element={<ProtectedRoute><ExcuseApproval /></ProtectedRoute>} />
+            <Route path="/admin/courses" element={<ProtectedRoute><AdminCourses /></ProtectedRoute>} />
+            <Route path="/admin/sections" element={<ProtectedRoute><AdminSections /></ProtectedRoute>} />
+            <Route path="/announcements" element={<ProtectedRoute><Announcements /></ProtectedRoute>} />
+            <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+            <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+            <Route path="/meals/menu" element={<ProtectedRoute><MealMenu /></ProtectedRoute>} />
+            <Route path="/meals/reservations" element={<ProtectedRoute><MyReservations /></ProtectedRoute>} />
+            <Route path="/schedule" element={<ProtectedRoute><MySchedule /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
-          {/* Öğrenci ve Genel Route'lar */}
-          <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
-          <Route path="/events/:id" element={<ProtectedRoute><EventDetail /></ProtectedRoute>} />
-          <Route path="/my-events" element={<ProtectedRoute><MyEvents /></ProtectedRoute>} />
-          <Route path="/reservations" element={<ProtectedRoute><ClassroomReservations /></ProtectedRoute>} />
+            {/* Öğrenci ve Genel Route'lar */}
+            <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+            <Route path="/events/:id" element={<ProtectedRoute><EventDetail /></ProtectedRoute>} />
+            <Route path="/my-events" element={<ProtectedRoute><MyEvents /></ProtectedRoute>} />
+            <Route path="/reservations" element={<ProtectedRoute><ClassroomReservations /></ProtectedRoute>} />
 
-          {/* Personel Route'ları (Yetki kontrolü eklenmeli: role="staff") */}
-          <Route path="/staff/scanner" element={<ProtectedRoute><QRScanner /></ProtectedRoute>} />
-          <Route path="/events/checkin" element={<ProtectedRoute><EventCheckIn /></ProtectedRoute>} />
+            {/* Personel Route'ları (Yetki kontrolü eklenmeli: role="staff") */}
+            <Route path="/staff/scanner" element={<ProtectedRoute><QRScanner /></ProtectedRoute>} />
+            <Route path="/events/checkin" element={<ProtectedRoute><EventCheckIn /></ProtectedRoute>} />
 
-          {/* Admin Route'ları (Yetki kontrolü eklenmeli: role="admin") */}
-          <Route path="/admin/menus" element={<ProtectedRoute><MenuManagement /></ProtectedRoute>} />
-          <Route path="/admin/events" element={<ProtectedRoute><EventManagement /></ProtectedRoute>} />
-          <Route path="/admin/scheduling/generate" element={<ProtectedRoute><GenerateSchedule /></ProtectedRoute>} />
-          <Route path="/admin/scheduling/drafts" element={<ProtectedRoute><DraftSchedules /></ProtectedRoute>} />
-          <Route path="/admin/schedules/departments" element={<ProtectedRoute><DepartmentSchedules /></ProtectedRoute>} />
-          <Route path="*" element={<NotFound />} />
+            {/* Admin Route'ları (Yetki kontrolü eklenmeli: role="admin") */}
+            <Route path="/admin/menus" element={<ProtectedRoute><MenuManagement /></ProtectedRoute>} />
+            <Route path="/admin/events" element={<ProtectedRoute><EventManagement /></ProtectedRoute>} />
+            <Route path="/admin/scheduling/generate" element={<ProtectedRoute><GenerateSchedule /></ProtectedRoute>} />
+            <Route path="/admin/scheduling/drafts" element={<ProtectedRoute><DraftSchedules /></ProtectedRoute>} />
+            <Route path="/admin/schedules/departments" element={<ProtectedRoute><DepartmentSchedules /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
 
-          <Route path="/admin/equipment" element={<EquipmentManagement />} />
-          <Route path="/admin/reports" element={<ResourceUtilization />} />
-        </Routes>
-      </Router>
+            <Route path="/admin/equipment" element={<EquipmentManagement />} />
+            <Route path="/admin/reports" element={<ResourceUtilization />} />
+          </Routes>
+        </Router>
         <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       </AuthProvider>
     </ThemeProvider>

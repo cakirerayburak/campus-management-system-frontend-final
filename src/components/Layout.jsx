@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { 
-  AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem, 
+import {
+  AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem,
   Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Container,
   CssBaseline, useTheme, useMediaQuery, Divider, Collapse
 } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
@@ -31,6 +32,7 @@ import BarChartIcon from '@mui/icons-material/BarChart'; // Raporlar için
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 
 const drawerWidth = 280;
 
@@ -39,7 +41,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -53,7 +55,7 @@ const Layout = ({ children }) => {
   };
 
   // --- MENÜ YAPILANDIRMASI ---
-  
+
   // 1. Temel Menü (Herkes için)
   let menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
@@ -120,6 +122,7 @@ const Layout = ({ children }) => {
 
   // 4. Alt Menü (Genel)
   menuItems.push(
+    { text: 'Bildirimler', icon: <NotificationsIcon />, path: '/notifications' },
     { text: 'Ders Kataloğu', icon: <SchoolIcon />, path: '/courses' },
     { text: 'Duyurular', icon: <CampaignIcon />, path: '/announcements' },
   );
@@ -127,19 +130,19 @@ const Layout = ({ children }) => {
   const drawerContent = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#111827', color: 'white' }}>
       {/* Sidebar Header */}
-      <Box sx={{ 
-        height: 64, 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        height: 64,
+        display: 'flex',
+        alignItems: 'center',
         px: 3,
         borderBottom: '1px solid rgba(255,255,255,0.1)'
       }}>
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
-          minWidth: 40, height: 40, 
-          bgcolor: theme.palette.primary.main, 
+          minWidth: 40, height: 40,
+          bgcolor: theme.palette.primary.main,
           borderRadius: 2,
           mr: 2,
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
@@ -150,7 +153,7 @@ const Layout = ({ children }) => {
           KampüsApp
         </Typography>
       </Box>
-      
+
       {/* Menü Listesi */}
       <List sx={{ px: 2, py: 3, flexGrow: 1, overflowY: 'auto' }}>
         <Typography variant="caption" sx={{ px: 2, mb: 1, display: 'block', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
@@ -159,17 +162,17 @@ const Layout = ({ children }) => {
         {menuItems.map((item, index) => {
           const isActive = location.pathname === item.path;
           return (
-            <ListItem 
-              button 
+            <ListItem
+              button
               key={index} // text çakışması olmaması için index
               onClick={() => { navigate(item.path); setMobileOpen(false); }}
-              sx={{ 
-                mb: 0.5, 
+              sx={{
+                mb: 0.5,
                 borderRadius: 2,
                 transition: 'all 0.2s',
                 bgcolor: isActive ? theme.palette.primary.main : 'transparent',
                 color: isActive ? 'white' : '#9ca3af',
-                '&:hover': { 
+                '&:hover': {
                   bgcolor: isActive ? theme.palette.primary.dark : 'rgba(255,255,255,0.05)',
                   color: 'white'
                 }
@@ -181,12 +184,12 @@ const Layout = ({ children }) => {
           );
         })}
       </List>
-      
+
       {/* Footer */}
       <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
         <ListItem button onClick={handleLogout} sx={{ borderRadius: 2, color: '#ef4444', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.1)' } }}>
-           <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><LogoutIcon /></ListItemIcon>
-           <ListItemText primary="Güvenli Çıkış" />
+          <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><LogoutIcon /></ListItemIcon>
+          <ListItemText primary="Güvenli Çıkış" />
         </ListItem>
       </Box>
     </Box>
@@ -195,7 +198,7 @@ const Layout = ({ children }) => {
   return (
     <Box sx={{ display: 'flex', bgcolor: '#f3f4f6', minHeight: '100vh' }}>
       <CssBaseline />
-      
+
       {/* Header (AppBar) */}
       <AppBar
         position="fixed"
@@ -214,25 +217,28 @@ const Layout = ({ children }) => {
           <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { md: 'none' } }}>
             <MenuIcon />
           </IconButton>
-          
+
           <Box sx={{ flexGrow: 1 }} />
-          
+
+          {/* Notification Bell */}
+          <NotificationBell />
+
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-             {user && (
-               <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{user.name}</Typography>
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    {user.role === 'student' ? 'Öğrenci' : user.role === 'faculty' ? 'Akademisyen' : user.role === 'admin' ? 'Yönetici' : 'Personel'}
-                  </Typography>
-               </Box>
-             )}
-             <IconButton onClick={handleMenu} sx={{ p: 0.5, border: '2px solid transparent', '&:hover': { border: `2px solid ${theme.palette.primary.light}` } }}>
-                <Avatar src={user?.profile_picture_url} sx={{ bgcolor: theme.palette.primary.main, width: 36, height: 36 }}>
-                  {user?.name?.charAt(0)}
-                </Avatar>
-             </IconButton>
+            {user && (
+              <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{user.name}</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {user.role === 'student' ? 'Öğrenci' : user.role === 'faculty' ? 'Akademisyen' : user.role === 'admin' ? 'Yönetici' : 'Personel'}
+                </Typography>
+              </Box>
+            )}
+            <IconButton onClick={handleMenu} sx={{ p: 0.5, border: '2px solid transparent', '&:hover': { border: `2px solid ${theme.palette.primary.light}` } }}>
+              <Avatar src={user?.profile_picture_url} sx={{ bgcolor: theme.palette.primary.main, width: 36, height: 36 }}>
+                {user?.name?.charAt(0)}
+              </Avatar>
+            </IconButton>
           </Box>
-          
+
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
