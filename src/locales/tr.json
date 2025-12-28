@@ -395,28 +395,9 @@
             "section": "Şube"
         }
     },
-    "common": {
-        "no_name": "İsimsiz",
-        "unknown": "Belirsiz",
-        "time": "Saat",
-        "course": "Ders",
-        "classroom": "Derslik",
-        "instructor": "Öğretim Üyesi",
-        "close": "Kapat"
-    },
     "qr_code": {
         "title": "QR Kod",
         "description": "QR kodunuzu görevliye gösteriniz."
-    },
-    "notifications": {
-        "title": "Bildirimler",
-        "mark_all_read": "Tümünü Oku",
-        "empty": "Henüz bildiriminiz yok",
-        "view_all": "Tüm Bildirimleri Görüntüle",
-        "just_now": "Az önce",
-        "mins_ago": "{{count}} dk önce",
-        "hours_ago": "{{count}} saat önce",
-        "days_ago": "{{count}} gün önce"
     },
     "draft_schedules": {
         "title": "Taslak Programlar",
@@ -892,7 +873,13 @@
         "close": "Kapat",
         "delete": "Sil",
         "settings": "Ayarlar",
-        "students": "Öğrenciler"
+        "students": "Öğrenciler",
+        "no_name": "İsimsiz",
+        "unknown": "Belirsiz",
+        "time": "Saat",
+        "course": "Ders",
+        "classroom": "Derslik",
+        "instructor": "Öğretim Üyesi"
     },
     "profile": {
         "info": "Bilgiler",
@@ -935,6 +922,12 @@
         "preferences_load_failed": "Tercihler yüklenemedi",
         "operation_failed": "İşlem başarısız",
         "preference_update_failed": "Tercih güncellenemedi",
+        "empty": "Henüz bildiriminiz yok",
+        "view_all": "Tüm Bildirimleri Görüntüle",
+        "just_now": "Az önce",
+        "mins_ago": "{{count}} dk önce",
+        "hours_ago": "{{count}} saat önce",
+        "days_ago": "{{count}} gün önce",
         "category": {
             "academic": "Akademik",
             "attendance": "Yoklama",

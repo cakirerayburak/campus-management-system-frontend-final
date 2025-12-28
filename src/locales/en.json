@@ -392,28 +392,9 @@
             "section": "Section"
         }
     },
-    "common": {
-        "no_name": "No Name",
-        "unknown": "Unknown",
-        "time": "Time",
-        "course": "Course",
-        "classroom": "Classroom",
-        "instructor": "Instructor",
-        "close": "Close"
-    },
     "qr_code": {
         "title": "QR Code",
         "description": "Show this QR code to the attendant."
-    },
-    "notifications": {
-        "title": "Notifications",
-        "mark_all_read": "Mark All as Read",
-        "empty": "No notifications yet",
-        "view_all": "View All Notifications",
-        "just_now": "Just now",
-        "mins_ago": "{{count}} mins ago",
-        "hours_ago": "{{count}} hours ago",
-        "days_ago": "{{count}} days ago"
     },
     "draft_schedules": {
         "title": "Draft Schedules",
@@ -889,7 +870,13 @@
         "close": "Close",
         "delete": "Delete",
         "settings": "Settings",
-        "students": "Students"
+        "students": "Students",
+        "no_name": "No Name",
+        "unknown": "Unknown",
+        "time": "Time",
+        "course": "Course",
+        "classroom": "Classroom",
+        "instructor": "Instructor"
     },
     "profile": {
         "info": "Information",
@@ -932,6 +919,12 @@
         "preferences_load_failed": "Failed to load preferences",
         "operation_failed": "Operation failed",
         "preference_update_failed": "Failed to update preference",
+        "empty": "No notifications yet",
+        "view_all": "View All Notifications",
+        "just_now": "Just now",
+        "mins_ago": "{{count}} mins ago",
+        "hours_ago": "{{count}} hours ago",
+        "days_ago": "{{count}} days ago",
         "category": {
             "academic": "Academic",
             "attendance": "Attendance",
