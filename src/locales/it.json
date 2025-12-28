@@ -1071,6 +1071,26 @@
         "failed": "La reimpostazione della password non è riuscita. ",
         "token_error": "Errore token"
     },
+    "waitlist": {
+        "count_label": "Lista d'attesa",
+        "people_waiting": "persone in attesa",
+        "join_waitlist": "Iscriviti alla lista d'attesa",
+        "leave_waitlist": "Esci dalla lista d'attesa",
+        "accept_spot": "Accetta il posto",
+        "decline_spot": "Rifiuta",
+        "join_success": "Iscrizione alla lista d'attesa avvenuta con successo!",
+        "join_error": "Impossibile iscriversi alla lista d'attesa",
+        "leave_success": "Uscita dalla lista d'attesa avvenuta con successo",
+        "leave_error": "Impossibile uscire dalla lista d'attesa",
+        "accept_success": "Congratulazioni! Ora sei registrato all'evento!",
+        "accept_error": "Impossibile accettare il posto",
+        "on_waitlist_title": "Sei nella lista d'attesa",
+        "position_desc": "La tua posizione: #{{position}}. Ti avviseremo quando si libererà un posto.",
+        "spot_available_title": "🎉 Un posto è disponibile!",
+        "spot_available_desc": "Si è liberato un posto per te! Accettalo ora prima che scada.",
+        "time_remaining": "Tempo rimanente",
+        "expired": "Scaduto"
+    },
     "wallet": {
         "title": "Portafoglio",
         "current_balance": "Saldo attuale",
