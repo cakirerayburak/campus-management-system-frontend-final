@@ -89,10 +89,19 @@ const Dashboard = () => {
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
                 title={t('gpa')}
-                value={stats?.gpa || "0.00"}
+                value={stats?.gpa?.toFixed(2) || "0.00"}
                 icon={<GradeIcon fontSize="large" />}
                 color="#ca8a04"
                 bgColor="#fef9c3"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <StatCard
+                title={t('semester_gpa')}
+                value={stats?.semester_gpa?.toFixed(2) || "0.00"}
+                icon={<GradeIcon fontSize="large" />}
+                color="#7c3aed"
+                bgColor="#ede9fe"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -106,24 +115,16 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title={t('attendance')}
-                value={stats?.totalAttendance || 0}
-                icon={<EventAvailableIcon fontSize="large" />}
+                title={t('credits_earned')}
+                value={`${stats?.total_credits_earned || 0} / ${stats?.total_ects_earned || 0} ECTS`}
+                icon={<SchoolIcon fontSize="large" />}
                 color="#16a34a"
                 bgColor="#dcfce7"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <StatCard
-                title={t('student_number')}
-                value={stats?.studentNumber || "-"}
-                icon={<SchoolIcon fontSize="large" />}
-                color="#9333ea"
-                bgColor="#f3e8ff"
-              />
-            </Grid>
           </>
         )}
+
 
         {/* --- AKADEMİSYEN KARTLARI --- */}
         {user?.role === 'faculty' && (
