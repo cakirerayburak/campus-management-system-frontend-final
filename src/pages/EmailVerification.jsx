@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Container, Box, Typography, CircularProgress, Alert } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -9,6 +10,7 @@ import { toast } from 'react-toastify';
 const EmailVerification = () => {
   const { token } = useParams(); // URL'den token'ı al
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [status, setStatus] = useState('loading'); // loading, success, error
   const [message, setMessage] = useState('');
 
@@ -18,11 +20,12 @@ const EmailVerification = () => {
         // Backend API'ye istek at
         // NOT: Backend'deki endpoint POST methodu bekliyor
         await api.post('/auth/verify-email', { token });
-        
+
         setStatus('success');
-        setMessage('E-posta başarıyla doğrulandı! Giriş sayfasına yönlendiriliyorsunuz...');
-        toast.success('E-posta adresiniz başarıyla doğrulandı!');
-        
+        setStatus('success');
+        setMessage(t('email_verification.success_message'));
+        toast.success(t('email_verification.success_message'));
+
         // 3 saniye sonra Login'e at
         setTimeout(() => {
           navigate('/login');
@@ -30,7 +33,7 @@ const EmailVerification = () => {
 
       } catch (error) {
         setStatus('error');
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Doğrulama başarısız. Token geçersiz veya süresi dolmuş.';
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || t('email_verification.error_message');
         setMessage(errorMessage);
         toast.error(errorMessage);
       }
@@ -40,8 +43,8 @@ const EmailVerification = () => {
       verifyToken();
     } else {
       setStatus('error');
-      setMessage('Doğrulama kodu bulunamadı.');
-      toast.error('Doğrulama kodu bulunamadı.');
+      setMessage(t('email_verification.no_token'));
+      toast.error(t('email_verification.no_token'));
     }
   }, [token, navigate]);
 
@@ -63,14 +66,14 @@ const EmailVerification = () => {
         {status === 'loading' && (
           <>
             <CircularProgress sx={{ mb: 2 }} />
-            <Typography variant="h6">Hesabınız doğrulanıyor...</Typography>
+            <Typography variant="h6">{t('email_verification.loading')}</Typography>
           </>
         )}
 
         {status === 'success' && (
           <>
             <CheckCircleOutlineIcon color="success" sx={{ fontSize: 60, mb: 2 }} />
-            <Typography variant="h5" gutterBottom>Başarılı!</Typography>
+            <Typography variant="h5" gutterBottom>{t('email_verification.success')}</Typography>
             <Alert severity="success">{message}</Alert>
           </>
         )}
@@ -78,7 +81,7 @@ const EmailVerification = () => {
         {status === 'error' && (
           <>
             <ErrorOutlineIcon color="error" sx={{ fontSize: 60, mb: 2 }} />
-            <Typography variant="h5" gutterBottom>Hata!</Typography>
+            <Typography variant="h5" gutterBottom>{t('email_verification.error')}</Typography>
             <Alert severity="error">{message}</Alert>
           </>
         )}

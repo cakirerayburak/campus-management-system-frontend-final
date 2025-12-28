@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Typography, Paper, Grid, Box, Chip, Button, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem,
@@ -13,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
 const Announcements = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,28 +42,28 @@ const Announcements = () => {
 
   const handleSubmit = async () => {
     if (!formData.title || !formData.content) {
-      toast.warning("Başlık ve içerik zorunludur.");
+      toast.warning(t('announcements.required_error'));
       return;
     }
     try {
       await api.post('/announcements', formData);
-      toast.success("Duyuru yayınlandı.");
+      toast.success(t('announcements.published'));
       setOpen(false);
       setFormData({ title: '', content: '', target_role: 'all', priority: 'normal' }); // Reset
       fetchAnnouncements();
     } catch (error) {
-      toast.error("Duyuru eklenemedi.");
+      toast.error(t('announcements.add_failed'));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Bu duyuruyu silmek istediğinize emin misiniz?")) return;
+    if (!window.confirm(t('announcements.confirm_delete'))) return;
     try {
       await api.delete(`/announcements/${id}`);
-      toast.success("Duyuru silindi.");
+      toast.success(t('announcements.deleted'));
       setAnnouncements(prev => prev.filter(a => a.id !== id));
     } catch (error) {
-      toast.error("Silme işlemi başarısız.");
+      toast.error(t('notifications.operation_failed'));
     }
   };
 
@@ -78,7 +80,7 @@ const Announcements = () => {
         mb: 4
       }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-          Duyurular
+          {t('announcements.title')}
         </Typography>
         {user?.role === 'admin' && (
           <Button
@@ -88,13 +90,13 @@ const Announcements = () => {
             disableElevation
             size={isMobile ? 'small' : 'medium'}
           >
-            Yeni Duyuru
+            {t('announcements.new')}
           </Button>
         )}
       </Box>
 
       {announcements.length === 0 ? (
-        <Alert severity="info">Henüz yayınlanmış bir duyuru yok.</Alert>
+        <Alert severity="info">{t('announcements.no_data')}</Alert>
       ) : (
         <Grid container spacing={3}>
           {announcements.map((ann) => (
@@ -111,10 +113,10 @@ const Announcements = () => {
                       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         {ann.title}
                       </Typography>
-                      {ann.priority === 'high' && <Chip label="ÖNEMLİ" color="error" size="small" />}
+                      {ann.priority === 'high' && <Chip label={t('announcements.important')} color="error" size="small" />}
                     </Box>
                     <Typography variant="caption" color="text.secondary">
-                      {new Date(ann.createdAt).toLocaleDateString('tr-TR')}
+                      {new Date(ann.createdAt).toLocaleDateString(i18n.language)}
                     </Typography>
                   </Box>
 
@@ -124,7 +126,7 @@ const Announcements = () => {
 
                   <Box sx={{ mt: 2 }}>
                     <Chip
-                      label={ann.target_role === 'all' ? 'Genel' : ann.target_role === 'student' ? 'Öğrenciler' : 'Akademik'}
+                      label={ann.target_role === 'all' ? t('announcements.general') : ann.target_role === 'student' ? t('common.students') : t('common.faculty')}
                       size="small"
                       variant="outlined"
                       sx={{ fontSize: '0.75rem' }}
@@ -147,12 +149,12 @@ const Announcements = () => {
 
       {/* Duyuru Ekleme Modalı (Sadece Admin) */}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" fullScreen={isMobile}>
-        <DialogTitle>Yeni Duyuru Yayınla</DialogTitle>
+        <DialogTitle>{t('announcements.new')}</DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
             <Grid item xs={12}>
               <TextField
-                label="Başlık"
+                label={t('announcements.title_label')}
                 fullWidth
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -161,31 +163,31 @@ const Announcements = () => {
             <Grid item xs={6}>
               <TextField
                 select
-                label="Hedef Kitle"
+                label={t('announcements.target')}
                 fullWidth
                 value={formData.target_role}
                 onChange={(e) => setFormData({ ...formData, target_role: e.target.value })}
               >
-                <MenuItem value="all">Herkes</MenuItem>
-                <MenuItem value="student">Öğrenciler</MenuItem>
-                <MenuItem value="faculty">Öğretim Üyeleri</MenuItem>
+                <MenuItem value="all">{t('announcements.everyone')}</MenuItem>
+                <MenuItem value="student">{t('common.student')}</MenuItem>
+                <MenuItem value="faculty">{t('common.faculty')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={6}>
               <TextField
                 select
-                label="Önem Derecesi"
+                label={t('announcements.priority')}
                 fullWidth
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
               >
-                <MenuItem value="normal">Normal</MenuItem>
-                <MenuItem value="high">Yüksek (Acil)</MenuItem>
+                <MenuItem value="normal">{t('announcements.normal')}</MenuItem>
+                <MenuItem value="high">{t('announcements.high')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="İçerik"
+                label={t('announcements.content')}
                 fullWidth
                 multiline
                 rows={4}
@@ -196,8 +198,8 @@ const Announcements = () => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="inherit">İptal</Button>
-          <Button onClick={handleSubmit} variant="contained">Yayınla</Button>
+          <Button onClick={() => setOpen(false)} color="inherit">{t('common.cancel')}</Button>
+          <Button onClick={handleSubmit} variant="contained">{t('announcements.publish')}</Button>
         </DialogActions>
       </Dialog>
     </Layout>

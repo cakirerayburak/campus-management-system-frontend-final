@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Container, Grid, Paper, Typography, Button, TextField, Table, TableBody,
   TableCell, TableHead, TableRow, Chip, Box, Dialog, DialogTitle, DialogContent,
@@ -13,6 +14,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 const Wallet = () => {
+  const { t } = useTranslation();
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [amount, setAmount] = useState('');
@@ -38,17 +40,17 @@ const Wallet = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Veriler yüklenemedi');
+      toast.error(t('wallet.load_error'));
     }
   };
 
   const handleTopUp = async () => {
     const amountValue = parseFloat(amount);
     if (!amount || amountValue <= 0) {
-      return toast.error('Geçerli bir miktar girin');
+      return toast.error(t('wallet.invalid_amount'));
     }
     if (amountValue < 50) {
-      return toast.error('Minimum 50 TRY yükleyebilirsiniz');
+      return toast.error(t('wallet.min_limit_error'));
     }
 
     try {
@@ -60,12 +62,12 @@ const Wallet = () => {
         setPaymentModal({ open: true, paymentUrl: res.data.data.paymentUrl, paymentId: res.data.data.paymentId });
       } else {
         // Direkt başarılı (test modu)
-        toast.success('Bakiye yüklendi!');
+        toast.success(t('wallet.success_topup'));
         setAmount('');
         fetchWalletData();
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Hata oluştu');
+      toast.error(error.response?.data?.error || t('common.operation_failed'));
     } finally {
       setLoading(false);
     }
@@ -82,7 +84,7 @@ const Wallet = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentId = urlParams.get('paymentId');
     if (paymentId) {
-      toast.success('Ödeme başarılı! Bakiye güncelleniyor...');
+      toast.success(t('wallet.success_payment'));
       setTimeout(() => {
         fetchWalletData();
       }, 2000);
@@ -96,12 +98,12 @@ const Wallet = () => {
 
   const getTransactionTypeLabel = (type) => {
     switch (type) {
-      case 'deposit': return 'Yükleme';
-      case 'payment': return 'Ödeme';
-      case 'withdrawal': return 'Harcama';
-      case 'pending': return 'Beklemede';
-      case 'refund': return 'İade';
-      case 'transfer': return 'Transfer';
+      case 'deposit': return t('wallet.types.deposit');
+      case 'payment': return t('wallet.types.payment');
+      case 'withdrawal': return t('wallet.types.withdrawal');
+      case 'pending': return t('wallet.types.pending');
+      case 'refund': return t('wallet.types.refund');
+      case 'transfer': return t('wallet.types.transfer');
       default: return type;
     }
   };
@@ -122,7 +124,7 @@ const Wallet = () => {
     <Layout>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>
-          Cüzdan
+          {t('wallet.title')}
         </Typography>
 
         <Grid container spacing={3}>
@@ -130,7 +132,7 @@ const Wallet = () => {
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 4, textAlign: 'center', bgcolor: 'primary.light', color: 'white' }}>
               <AccountBalanceWalletIcon sx={{ fontSize: 60, mb: 2 }} />
-              <Typography variant="h6" sx={{ mb: 1 }}>Mevcut Bakiye</Typography>
+              <Typography variant="h6" sx={{ mb: 1 }}>{t('wallet.current_balance')}</Typography>
               <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
                 {parseFloat(balance).toFixed(2)} ₺
               </Typography>
@@ -139,22 +141,22 @@ const Wallet = () => {
             <Paper sx={{ p: 3, mt: 2 }}>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <AddCircleIcon color="primary" />
-                <Typography variant="h6">Para Yükle</Typography>
+                <Typography variant="h6">{t('wallet.top_up')}</Typography>
               </Box>
 
               <Alert severity="info" sx={{ mb: 2 }}>
-                Minimum yükleme tutarı: 50 ₺
+                {t('wallet.min_amount_alert')}
               </Alert>
 
               <TextField
                 fullWidth
-                label="Miktar (TL)"
+                label={t('wallet.amount_label')}
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 inputProps={{ min: 50, step: 0.01 }}
                 sx={{ mb: 2 }}
-                helperText="Minimum 50 TRY"
+                helperText={t('wallet.min_helper')}
               />
 
               <Button
@@ -165,7 +167,7 @@ const Wallet = () => {
                 startIcon={<CreditCardIcon />}
                 size="large"
               >
-                {loading ? 'İşleniyor...' : 'Ödeme Yap'}
+                {loading ? t('wallet.processing') : t('wallet.process_payment')}
               </Button>
             </Paper>
           </Grid>
@@ -175,13 +177,13 @@ const Wallet = () => {
             <Paper sx={{ p: { xs: 2, sm: 3 } }}>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <HistoryIcon color="primary" />
-                <Typography variant="h6">İşlem Geçmişi</Typography>
+                <Typography variant="h6">{t('wallet.history')}</Typography>
               </Box>
 
               {transactions.length === 0 ? (
                 <Box sx={{ textAlign: 'center', py: 4 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Henüz işlem geçmişiniz yok.
+                    {t('wallet.no_history')}
                   </Typography>
                 </Box>
               ) : (
@@ -190,11 +192,11 @@ const Wallet = () => {
                     <Table sx={{ minWidth: 600 }}>
                       <TableHead>
                         <TableRow>
-                          <TableCell>Tarih</TableCell>
-                          <TableCell>Açıklama</TableCell>
-                          <TableCell align="right">Tutar</TableCell>
-                          <TableCell>Bakiye Sonrası</TableCell>
-                          <TableCell>Durum</TableCell>
+                          <TableCell>{t('wallet.date')}</TableCell>
+                          <TableCell>{t('wallet.description')}</TableCell>
+                          <TableCell align="right">{t('wallet.amount')}</TableCell>
+                          <TableCell>{t('wallet.balance_after')}</TableCell>
+                          <TableCell>{t('wallet.status')}</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -257,21 +259,21 @@ const Wallet = () => {
 
         {/* Payment Gateway Redirect Modal */}
         <Dialog open={paymentModal.open} onClose={() => setPaymentModal({ open: false, paymentUrl: null })}>
-          <DialogTitle>Ödeme İşlemi</DialogTitle>
+          <DialogTitle>{t('wallet.payment_modal_title')}</DialogTitle>
           <DialogContent>
             <Alert severity="info" sx={{ mb: 2 }}>
-              Ödeme sayfasına yönlendirileceksiniz.
+              {t('wallet.payment_redirect_alert')}
             </Alert>
             <Typography variant="body2">
-              Ödeme işleminizi tamamladıktan sonra otomatik olarak buraya döneceksiniz.
+              {t('wallet.payment_redirect_desc')}
             </Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setPaymentModal({ open: false, paymentUrl: null })}>
-              İptal
+              {t('common.cancel')}
             </Button>
             <Button variant="contained" onClick={handlePaymentRedirect}>
-              Ödeme Sayfasına Git
+              {t('wallet.go_to_payment')}
             </Button>
           </DialogActions>
         </Dialog>

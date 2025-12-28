@@ -22,8 +22,10 @@ import { getAllEquipment, createEquipment, deleteEquipment, updateEquipment } fr
 import Layout from '../../components/Layout';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 const EquipmentManagement = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,7 @@ const EquipmentManagement = () => {
         setItems(response.data.data);
       }
     } catch (err) {
-      toast.error('Ekipman listesi alınamadı.');
+      toast.error(t('equipment_management.load_error'));
     } finally {
       setLoading(false);
     }
@@ -56,44 +58,44 @@ const EquipmentManagement = () => {
 
   const handleCreateSubmit = async () => {
     if (!newItem.name || !newItem.type) {
-      toast.warning('Ad ve Tür alanları zorunludur.');
+      toast.warning(t('equipment_management.required_fields'));
       return;
     }
     try {
       await createEquipment(newItem);
-      toast.success('Ekipman eklendi.');
+      toast.success(t('equipment_management.success_add'));
       setCreateOpen(false);
       setNewItem({ name: '', type: '', serial_number: '', condition: 'New', status: 'available' });
       fetchEquipment();
     } catch (err) {
-      toast.error('Ekipman eklenemedi.');
+      toast.error(t('equipment_management.error_add'));
     }
   };
 
   const handleUpdate = async () => {
     if (!selectedItem.name || !selectedItem.type) {
-      toast.warning('Ad ve Tür alanları zorunludur.');
+      toast.warning(t('equipment_management.required_fields'));
       return;
     }
     try {
       await updateEquipment(selectedItem.id, selectedItem);
-      toast.success('Ekipman güncellendi.');
+      toast.success(t('equipment_management.success_update'));
       setUpdateOpen(false);
       setSelectedItem(null);
       fetchEquipment();
     } catch (err) {
-      toast.error('Güncelleme başarısız.');
+      toast.error(t('equipment_management.error_update'));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bu ekipmanı silmek istediğinize emin misiniz?')) return;
+    if (!window.confirm(t('equipment_management.confirm_delete'))) return;
     try {
       await deleteEquipment(id);
-      toast.success('Ekipman silindi.');
+      toast.success(t('equipment_management.success_delete'));
       fetchEquipment();
     } catch (err) {
-      toast.error('Silme işlemi başarısız.');
+      toast.error(t('equipment_management.error_delete'));
     }
   };
 
@@ -106,11 +108,11 @@ const EquipmentManagement = () => {
   const handleQuickStatusChange = async (item, newStatus) => {
     try {
       await updateEquipment(item.id, { ...item, status: newStatus });
-      toast.success('Durum güncellendi.');
+      toast.success(t('equipment_management.success_status'));
       // Tüm listeyi çekmek yerine sadece o item'ı güncellemek daha performanslı olur ama şimdilik fetch
       fetchEquipment();
     } catch (err) {
-      toast.error('Durum değiştirilemedi.');
+      toast.error(t('equipment_management.error_status'));
     }
   };
 
@@ -129,22 +131,22 @@ const EquipmentManagement = () => {
       case 'available':
         color = 'success';
         icon = <CheckIcon />;
-        label = 'Müsait';
+        label = t('equipment_management.status_labels.available');
         break;
       case 'borrowed':
         color = 'warning';
         icon = <WarningIcon />;
-        label = 'Ödünçte';
+        label = t('equipment_management.status_labels.borrowed');
         break;
       case 'maintenance':
         color = 'error';
         icon = <MaintenanceIcon />;
-        label = 'Bakımda';
+        label = t('equipment_management.status_labels.maintenance');
         break;
       case 'lost':
         color = 'default';
         icon = <LostIcon />;
-        label = 'Kayıp';
+        label = t('equipment_management.status_labels.lost');
         break;
       default:
         color = 'default';
@@ -158,10 +160,10 @@ const EquipmentManagement = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e293b', mb: 1 }}>
-            Envanter Yönetimi
+            {t('equipment_management.title')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Laboratuvar ve ders ekipmanlarını buradan takip edebilirsiniz.
+            {t('equipment_management.subtitle')}
           </Typography>
         </Box>
         {isAdmin && (
@@ -171,7 +173,7 @@ const EquipmentManagement = () => {
             onClick={() => setCreateOpen(true)}
             sx={{ borderRadius: 2 }}
           >
-            Yeni Ekipman
+            {t('equipment_management.new_equipment')}
           </Button>
         )}
       </Box>
@@ -185,18 +187,18 @@ const EquipmentManagement = () => {
           <Table>
             <TableHead sx={{ bgcolor: '#f8fafc' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Ekipman Adı</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Tür</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Durum</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Seri No</TableCell>
-                {isAdmin && <TableCell align="right" sx={{ fontWeight: 600, color: '#475569' }}>İşlem</TableCell>}
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>{t('equipment_management.equipment_name')}</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>{t('equipment_management.type')}</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>{t('equipment_management.status')}</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>{t('equipment_management.serial_number')}</TableCell>
+                {isAdmin && <TableCell align="right" sx={{ fontWeight: 600, color: '#475569' }}>{t('equipment_management.actions')}</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
               {items.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={isAdmin ? 5 : 4} align="center" sx={{ py: 4 }}>
-                    <Typography color="text.secondary">Envanterde kayıtlı ekipman yok.</Typography>
+                    <Typography color="text.secondary">{t('equipment_management.no_equipment')}</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -220,10 +222,10 @@ const EquipmentManagement = () => {
                             disableUnderline
                             sx={{ fontSize: '0.875rem', fontWeight: 600 }}
                           >
-                            <MenuItem value="available" sx={{ color: 'success.main' }}>Müsait</MenuItem>
-                            <MenuItem value="borrowed" sx={{ color: 'warning.main' }}>Ödünçte</MenuItem>
-                            <MenuItem value="maintenance" sx={{ color: 'error.main' }}>Bakımda</MenuItem>
-                            <MenuItem value="lost" sx={{ color: 'text.disabled' }}>Kayıp</MenuItem>
+                            <MenuItem value="available" sx={{ color: 'success.main' }}>{t('equipment_management.status_labels.available')}</MenuItem>
+                            <MenuItem value="borrowed" sx={{ color: 'warning.main' }}>{t('equipment_management.status_labels.borrowed')}</MenuItem>
+                            <MenuItem value="maintenance" sx={{ color: 'error.main' }}>{t('equipment_management.status_labels.maintenance')}</MenuItem>
+                            <MenuItem value="lost" sx={{ color: 'text.disabled' }}>{t('equipment_management.status_labels.lost')}</MenuItem>
                           </Select>
                         </FormControl>
                       ) : (
@@ -239,12 +241,12 @@ const EquipmentManagement = () => {
                     {isAdmin && (
                       <TableCell align="right">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                          <Tooltip title="Düzenle">
+                          <Tooltip title={t('equipment_management.edit')}>
                             <IconButton size="small" color="primary" onClick={() => openUpdateModal(item)}>
                               <EditIcon />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title="Sil">
+                          <Tooltip title={t('equipment_management.delete')}>
                             <IconButton size="small" color="error" onClick={() => handleDelete(item.id)}>
                               <DeleteIcon />
                             </IconButton>
@@ -263,18 +265,18 @@ const EquipmentManagement = () => {
 
       {/* Yeni Ekipman Dialog */}
       <Dialog open={createOpen} onClose={() => setCreateOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Yeni Ekipman Ekle</DialogTitle>
+        <DialogTitle>{t('equipment_management.add_equipment')}</DialogTitle>
         <DialogContent dividers>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
             <TextField
-              label="Ekipman Adı"
+              label={t('equipment_management.equipment_name')}
               fullWidth
               value={newItem.name}
               onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
             />
             <TextField
               select
-              label="Tür"
+              label={t('equipment_management.type')}
               fullWidth
               value={newItem.type}
               onChange={(e) => setNewItem({ ...newItem, type: e.target.value })}
@@ -286,47 +288,47 @@ const EquipmentManagement = () => {
               <MenuItem value="Diğer">Diğer</MenuItem>
             </TextField>
             <TextField
-              label="Seri Numarası"
+              label={t('equipment_management.serial_number')}
               fullWidth
               value={newItem.serial_number}
               onChange={(e) => setNewItem({ ...newItem, serial_number: e.target.value })}
             />
             <FormControl fullWidth>
-              <InputLabel>Durum</InputLabel>
+              <InputLabel>{t('equipment_management.status')}</InputLabel>
               <Select
                 value={newItem.status}
-                label="Durum"
+                label={t('equipment_management.status')}
                 onChange={(e) => setNewItem({ ...newItem, status: e.target.value })}
               >
-                <MenuItem value="available">Müsait</MenuItem>
-                <MenuItem value="borrowed">Ödünçte</MenuItem>
-                <MenuItem value="maintenance">Bakımda</MenuItem>
-                <MenuItem value="lost">Kayıp</MenuItem>
+                <MenuItem value="available">{t('equipment_management.status_labels.available')}</MenuItem>
+                <MenuItem value="borrowed">{t('equipment_management.status_labels.borrowed')}</MenuItem>
+                <MenuItem value="maintenance">{t('equipment_management.status_labels.maintenance')}</MenuItem>
+                <MenuItem value="lost">{t('equipment_management.status_labels.lost')}</MenuItem>
               </Select>
             </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCreateOpen(false)}>İptal</Button>
-          <Button onClick={handleCreateSubmit} variant="contained">Ekle</Button>
+          <Button onClick={() => setCreateOpen(false)}>{t('equipment_management.cancel')}</Button>
+          <Button onClick={handleCreateSubmit} variant="contained">{t('equipment_management.add')}</Button>
         </DialogActions>
       </Dialog>
 
       {/* Güncelleme Modalı */}
       <Dialog open={updateOpen} onClose={() => setUpdateOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Ekipmanı Düzenle</DialogTitle>
+        <DialogTitle>{t('equipment_management.edit_equipment')}</DialogTitle>
         <DialogContent dividers>
           {selectedItem && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
               <TextField
-                label="Ekipman Adı"
+                label={t('equipment_management.equipment_name')}
                 fullWidth
                 value={selectedItem.name}
                 onChange={(e) => setSelectedItem({ ...selectedItem, name: e.target.value })}
               />
               <TextField
                 select
-                label="Tür"
+                label={t('equipment_management.type')}
                 fullWidth
                 value={selectedItem.type}
                 onChange={(e) => setSelectedItem({ ...selectedItem, type: e.target.value })}
@@ -338,30 +340,30 @@ const EquipmentManagement = () => {
                 <MenuItem value="Diğer">Diğer</MenuItem>
               </TextField>
               <TextField
-                label="Seri Numarası"
+                label={t('equipment_management.serial_number')}
                 fullWidth
                 value={selectedItem.serial_number}
                 onChange={(e) => setSelectedItem({ ...selectedItem, serial_number: e.target.value })}
               />
               <FormControl fullWidth>
-                <InputLabel>Durum</InputLabel>
+                <InputLabel>{t('equipment_management.status')}</InputLabel>
                 <Select
                   value={selectedItem.status}
-                  label="Durum"
+                  label={t('equipment_management.status')}
                   onChange={(e) => setSelectedItem({ ...selectedItem, status: e.target.value })}
                 >
-                  <MenuItem value="available">Müsait</MenuItem>
-                  <MenuItem value="borrowed">Ödünçte</MenuItem>
-                  <MenuItem value="maintenance">Bakımda</MenuItem>
-                  <MenuItem value="lost">Kayıp</MenuItem>
+                  <MenuItem value="available">{t('equipment_management.status_labels.available')}</MenuItem>
+                  <MenuItem value="borrowed">{t('equipment_management.status_labels.borrowed')}</MenuItem>
+                  <MenuItem value="maintenance">{t('equipment_management.status_labels.maintenance')}</MenuItem>
+                  <MenuItem value="lost">{t('equipment_management.status_labels.lost')}</MenuItem>
                 </Select>
               </FormControl>
             </Box>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setUpdateOpen(false)}>İptal</Button>
-          <Button onClick={handleUpdate} variant="contained">Güncelle</Button>
+          <Button onClick={() => setUpdateOpen(false)}>{t('equipment_management.cancel')}</Button>
+          <Button onClick={handleUpdate} variant="contained">{t('equipment_management.update')}</Button>
         </DialogActions>
       </Dialog>
 

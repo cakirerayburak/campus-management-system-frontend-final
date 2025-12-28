@@ -43,6 +43,7 @@ import {
 import Layout from '../../components/Layout';
 import analyticsService from '../../services/analyticsService';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 // Renk paleti
 const COLORS = ['#4f46e5', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ef4444', '#84cc16'];
@@ -83,6 +84,7 @@ const StatCard = ({ title, value, icon, color, subtitle }) => (
 );
 
 const AdminDashboard = () => {
+    const { t, i18n } = useTranslation();
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
     const [overview, setOverview] = useState(null);
@@ -112,7 +114,7 @@ const AdminDashboard = () => {
             if (healthRes.success) setSystemHealth(healthRes.data);
         } catch (error) {
             console.error('Dashboard veri yükleme hatası:', error);
-            toast.error('Veriler yüklenirken hata oluştu');
+            toast.error(t('admin_dashboard.load_error'));
         } finally {
             setLoading(false);
         }
@@ -145,13 +147,13 @@ const AdminDashboard = () => {
             }}>
                 <Box>
                     <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-                        Admin Dashboard
+                        {t('admin_dashboard.title')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Sistem genel görünümü ve istatistikler
+                        {t('admin_dashboard.subtitle')}
                     </Typography>
                 </Box>
-                <Tooltip title="Yenile">
+                <Tooltip title={t('admin_dashboard.refresh')}>
                     <IconButton onClick={fetchData} color="primary">
                         <RefreshIcon />
                     </IconButton>
@@ -165,10 +167,10 @@ const AdminDashboard = () => {
                     icon={systemHealth.database === 'healthy' ? <SuccessIcon /> : <WarningIcon />}
                     sx={{ mb: 3 }}
                 >
-                    <strong>Sistem Durumu:</strong> {systemHealth.database === 'healthy' ? 'Sağlıklı' : 'Sorun Var'} |
-                    Son 1 saat: {systemHealth.lastHourActivity?.logins || 0} giriş,
-                    {systemHealth.lastHourActivity?.attendanceRecords || 0} yoklama |
-                    Son 24 saat: {systemHealth.last24HoursActivity?.newUsers || 0} yeni kullanıcı
+                    <strong>{t('admin_dashboard.system_health')}:</strong> {systemHealth.database === 'healthy' ? t('admin_dashboard.healthy') : t('admin_dashboard.issue')} |
+                    {t('admin_dashboard.last_hour')}: {systemHealth.lastHourActivity?.logins || 0} {t('admin_dashboard.login')},
+                    {systemHealth.lastHourActivity?.attendanceRecords || 0} {t('admin_dashboard.attendance')} |
+                    {t('admin_dashboard.last_24h')}: {systemHealth.last24HoursActivity?.newUsers || 0} {t('admin_dashboard.new_user')}
                 </Alert>
             )}
 
@@ -177,38 +179,38 @@ const AdminDashboard = () => {
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                     <Grid item xs={12} sm={6} md={3}>
                         <StatCard
-                            title="Toplam Kullanıcı"
+                            title={t('admin_dashboard.total_users')}
                             value={overview.users?.total || 0}
                             icon={<PeopleIcon />}
                             color="#4f46e5"
-                            subtitle={`${overview.users?.students || 0} öğrenci, ${overview.users?.faculty || 0} akademisyen`}
+                            subtitle={`${overview.users?.students || 0} ${t('admin_dashboard.student')}, ${overview.users?.faculty || 0} ${t('admin_dashboard.faculty')}`}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <StatCard
-                            title="Toplam Ders"
+                            title={t('admin_dashboard.total_courses')}
                             value={overview.academic?.courses || 0}
                             icon={<SchoolIcon />}
                             color="#10b981"
-                            subtitle={`${overview.academic?.sections || 0} şube aktif`}
+                            subtitle={`${overview.academic?.sections || 0} ${t('admin_dashboard.active_sections')}`}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <StatCard
-                            title="Etkinlikler"
+                            title={t('admin_dashboard.events')}
                             value={overview.events?.total || 0}
                             icon={<EventIcon />}
                             color="#8b5cf6"
-                            subtitle={`${overview.events?.upcoming || 0} yaklaşan`}
+                            subtitle={`${overview.events?.upcoming || 0} ${t('admin_dashboard.upcoming')}`}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <StatCard
-                            title="Bugünkü Yemek"
+                            title={t('admin_dashboard.todays_meals')}
                             value={overview.meals?.todayReservations || 0}
                             icon={<MealIcon />}
                             color="#f59e0b"
-                            subtitle="rezervasyon"
+                            subtitle={t('admin_dashboard.reservation')}
                         />
                     </Grid>
                 </Grid>
@@ -217,10 +219,10 @@ const AdminDashboard = () => {
             {/* Tabs */}
             <Paper sx={{ mb: 3 }}>
                 <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)} variant="scrollable">
-                    <Tab label="Kayıt Trendi" />
-                    <Tab label="Yoklama" />
-                    <Tab label="Akademik" />
-                    <Tab label="Yemek" />
+                    <Tab label={t('admin_dashboard.tab_registration')} />
+                    <Tab label={t('admin_dashboard.tab_attendance')} />
+                    <Tab label={t('admin_dashboard.tab_academic')} />
+                    <Tab label={t('admin_dashboard.tab_meal')} />
                 </Tabs>
             </Paper>
 
@@ -232,14 +234,14 @@ const AdminDashboard = () => {
                         <Grid item xs={12}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Son 30 Günde Yeni Kayıtlar
+                                    {t('admin_dashboard.registration_trend_title')}
                                 </Typography>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <AreaChart data={registrationTrend}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis
                                             dataKey="date"
-                                            tickFormatter={(value) => new Date(value).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' })}
+                                            tickFormatter={(value) => new Date(value).toLocaleDateString(i18n.language, { day: '2-digit', month: '2-digit' })}
                                         />
                                         <YAxis />
                                         <RechartsTooltip />
@@ -253,7 +255,7 @@ const AdminDashboard = () => {
                             <Grid item xs={12} md={6}>
                                 <Paper sx={{ p: 3 }}>
                                     <Typography variant="h6" fontWeight={600} gutterBottom>
-                                        Rol Dağılımı
+                                        {t('admin_dashboard.role_distribution')}
                                     </Typography>
                                     <ResponsiveContainer width="100%" height={250}>
                                         <PieChart>
@@ -284,11 +286,11 @@ const AdminDashboard = () => {
                         <Grid item xs={12} md={4}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Yoklama Durumu
+                                    {t('admin_dashboard.attendance_status')}
                                 </Typography>
                                 <Box sx={{ mt: 2 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                        <Typography variant="body2">Katılım</Typography>
+                                        <Typography variant="body2">{t('admin_dashboard.present')}</Typography>
                                         <Typography variant="body2" fontWeight={600}>
                                             {attendanceStats.stats?.present || 0}
                                         </Typography>
@@ -301,7 +303,7 @@ const AdminDashboard = () => {
                                     />
 
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                        <Typography variant="body2">Geç Gelme</Typography>
+                                        <Typography variant="body2">{t('admin_dashboard.late')}</Typography>
                                         <Typography variant="body2" fontWeight={600}>
                                             {attendanceStats.stats?.late || 0}
                                         </Typography>
@@ -314,7 +316,7 @@ const AdminDashboard = () => {
                                     />
 
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                        <Typography variant="body2">Şüpheli</Typography>
+                                        <Typography variant="body2">{t('admin_dashboard.suspicious')}</Typography>
                                         <Typography variant="body2" fontWeight={600}>
                                             {attendanceStats.stats?.flagged || 0}
                                         </Typography>
@@ -332,14 +334,14 @@ const AdminDashboard = () => {
                         <Grid item xs={12} md={8}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Son 7 Gün Yoklama Trendi
+                                    {t('admin_dashboard.attendance_trend')}
                                 </Typography>
                                 <ResponsiveContainer width="100%" height={250}>
                                     <BarChart data={attendanceStats.dailyDistribution || []}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis
                                             dataKey="date"
-                                            tickFormatter={(value) => new Date(value).toLocaleDateString('tr-TR', { weekday: 'short' })}
+                                            tickFormatter={(value) => new Date(value).toLocaleDateString(i18n.language, { weekday: 'short' })}
                                         />
                                         <YAxis />
                                         <RechartsTooltip />
@@ -357,7 +359,7 @@ const AdminDashboard = () => {
                         <Grid item xs={12} md={6}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    GPA Dağılımı
+                                    {t('admin_dashboard.gpa_distribution')}
                                 </Typography>
                                 <ResponsiveContainer width="100%" height={250}>
                                     <BarChart data={academicStats.gpaDistribution || []}>
@@ -365,7 +367,7 @@ const AdminDashboard = () => {
                                         <XAxis dataKey="range" />
                                         <YAxis />
                                         <RechartsTooltip />
-                                        <Bar dataKey="count" fill="#10b981" name="Öğrenci Sayısı" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="count" fill="#10b981" name={t('admin_dashboard.student_count')} radius={[4, 4, 0, 0]} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </Paper>
@@ -374,13 +376,13 @@ const AdminDashboard = () => {
                         <Grid item xs={12} md={6}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Kayıt Durumu
+                                    {t('admin_dashboard.enrollment_status')}
                                 </Typography>
                                 <ResponsiveContainer width="100%" height={250}>
                                     <PieChart>
                                         <Pie
                                             data={academicStats.enrollmentStatus?.map(s => ({
-                                                name: s.status === 'enrolled' ? 'Kayıtlı' : s.status === 'dropped' ? 'Bıraktı' : s.status,
+                                                name: s.status === 'enrolled' ? t('admin_dashboard.enrolled') : s.status === 'dropped' ? t('admin_dashboard.dropped') : s.status,
                                                 value: parseInt(s.count)
                                             })) || []}
                                             cx="50%"
@@ -408,13 +410,13 @@ const AdminDashboard = () => {
                         <Grid item xs={12} md={6}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Öğün Dağılımı
+                                    {t('admin_dashboard.meal_distribution')}
                                 </Typography>
                                 <ResponsiveContainer width="100%" height={250}>
                                     <PieChart>
                                         <Pie
                                             data={mealStats.mealTypeDistribution?.map(m => ({
-                                                name: m.meal_type === 'lunch' ? 'Öğle' : 'Akşam',
+                                                name: m.meal_type === 'lunch' ? t('admin_dashboard.lunch') : t('admin_dashboard.dinner'),
                                                 value: parseInt(m.count)
                                             })) || []}
                                             cx="50%"
@@ -437,7 +439,7 @@ const AdminDashboard = () => {
                         <Grid item xs={12} md={6}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Kullanım Durumu
+                                    {t('admin_dashboard.usage_status')}
                                 </Typography>
                                 <Grid container spacing={2} sx={{ mt: 1 }}>
                                     <Grid item xs={6}>
@@ -445,7 +447,7 @@ const AdminDashboard = () => {
                                             <Typography variant="h3" fontWeight={700} color="#10b981">
                                                 {mealStats.usageStats?.used || 0}
                                             </Typography>
-                                            <Typography variant="body2">Kullanıldı</Typography>
+                                            <Typography variant="body2">{t('admin_dashboard.used')}</Typography>
                                         </Card>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -453,7 +455,7 @@ const AdminDashboard = () => {
                                             <Typography variant="h3" fontWeight={700} color="#f59e0b">
                                                 {mealStats.usageStats?.pending || 0}
                                             </Typography>
-                                            <Typography variant="body2">Bekliyor</Typography>
+                                            <Typography variant="body2">{t('admin_dashboard.pending')}</Typography>
                                         </Card>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -461,7 +463,7 @@ const AdminDashboard = () => {
                                             <Typography variant="h3" fontWeight={700} color="#ef4444">
                                                 {mealStats.usageStats?.cancelled || 0}
                                             </Typography>
-                                            <Typography variant="body2">İptal</Typography>
+                                            <Typography variant="body2">{t('admin_dashboard.cancelled')}</Typography>
                                         </Card>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -469,7 +471,7 @@ const AdminDashboard = () => {
                                             <Typography variant="h3" fontWeight={700} color="#4f46e5">
                                                 {mealStats.usageStats?.total || 0}
                                             </Typography>
-                                            <Typography variant="body2">Toplam</Typography>
+                                            <Typography variant="body2">{t('admin_dashboard.total')}</Typography>
                                         </Card>
                                     </Grid>
                                 </Grid>
@@ -479,18 +481,18 @@ const AdminDashboard = () => {
                         <Grid item xs={12}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} gutterBottom>
-                                    Haftalık Rezervasyon Trendi
+                                    {t('admin_dashboard.weekly_reservation_trend')}
                                 </Typography>
                                 <ResponsiveContainer width="100%" height={250}>
                                     <LineChart data={mealStats.dailyTrend || []}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis
                                             dataKey="date"
-                                            tickFormatter={(value) => new Date(value).toLocaleDateString('tr-TR', { weekday: 'short' })}
+                                            tickFormatter={(value) => new Date(value).toLocaleDateString(i18n.language, { weekday: 'short' })}
                                         />
                                         <YAxis />
                                         <RechartsTooltip />
-                                        <Line type="monotone" dataKey="count" stroke="#f59e0b" strokeWidth={2} name="Rezervasyon" />
+                                        <Line type="monotone" dataKey="count" stroke="#f59e0b" strokeWidth={2} name={t('admin_dashboard.reservation')} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </Paper>

@@ -3,8 +3,10 @@ import { Container, Paper, TextField, Button, Typography, MenuItem, Box, Grid, C
 import { createMenu, getCafeterias } from '../../services/mealService';
 import { toast } from 'react-toastify';
 import Layout from '../../components/Layout';
+import { useTranslation } from 'react-i18next';
 
 const MenuManagement = () => {
+  const { t } = useTranslation();
   const [cafeterias, setCafeterias] = useState([]);
   const [loadingCafeterias, setLoadingCafeterias] = useState(true);
   const [formData, setFormData] = useState({
@@ -25,7 +27,7 @@ const MenuManagement = () => {
           setFormData(prev => ({ ...prev, cafeteria_id: res.data.data[0].id }));
         }
       } catch (error) {
-        toast.error('Yemekhaneler yüklenemedi: ' + error.response?.data?.error);
+        toast.error(t('menu_management.load_error') + ': ' + error.response?.data?.error);
       } finally {
         setLoadingCafeterias(false);
       }
@@ -37,7 +39,7 @@ const MenuManagement = () => {
     e.preventDefault();
 
     if (!formData.cafeteria_id) {
-      toast.error('Lütfen bir yemekhane seçin');
+      toast.error(t('menu_management.select_cafeteria'));
       return;
     }
 
@@ -49,10 +51,10 @@ const MenuManagement = () => {
       };
 
       await createMenu(payload);
-      toast.success('Menü başarıyla oluşturuldu');
+      toast.success(t('menu_management.success_create'));
       setFormData({ ...formData, items_json: '', date: '' });
     } catch (error) {
-      toast.error('Menü oluşturulamadı: ' + error.response?.data?.error);
+      toast.error(t('menu_management.error_create') + ': ' + error.response?.data?.error);
     }
   };
 
@@ -70,14 +72,14 @@ const MenuManagement = () => {
     <Layout>
       <Container maxWidth="md" sx={{ mt: 4 }}>
         <Paper sx={{ p: 4 }}>
-          <Typography variant="h5" gutterBottom>Yeni Yemek Menüsü Ekle</Typography>
+          <Typography variant="h5" gutterBottom>{t('menu_management.title')}</Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   type="date"
-                  label="Tarih"
+                  label={t('menu_management.date')}
                   InputLabelProps={{ shrink: true }}
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
@@ -88,20 +90,20 @@ const MenuManagement = () => {
                 <TextField
                   select
                   fullWidth
-                  label="Öğün Tipi"
+                  label={t('menu_management.meal_type')}
                   value={formData.meal_type}
                   onChange={(e) => setFormData({ ...formData, meal_type: e.target.value })}
                   required
                 >
-                  <MenuItem value="lunch">Öğle Yemeği</MenuItem>
-                  <MenuItem value="dinner">Akşam Yemeği</MenuItem>
+                  <MenuItem value="lunch">{t('menu_management.lunch')}</MenuItem>
+                  <MenuItem value="dinner">{t('menu_management.dinner')}</MenuItem>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   select
                   fullWidth
-                  label="Yemekhane"
+                  label={t('menu_management.cafeteria')}
                   value={formData.cafeteria_id}
                   onChange={(e) => setFormData({ ...formData, cafeteria_id: e.target.value })}
                   required
@@ -117,7 +119,7 @@ const MenuManagement = () => {
                 <TextField
                   fullWidth
                   type="number"
-                  label="Fiyat (TL)"
+                  label={t('menu_management.price')}
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   required
@@ -126,8 +128,8 @@ const MenuManagement = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Yemekler (Virgülle ayırın)"
-                  placeholder="Mercimek Çorbası, Orman Kebabı, Pilav, Ayran"
+                  label={t('menu_management.items')}
+                  placeholder={t('menu_management.items_placeholder')}
                   value={formData.items_json}
                   onChange={(e) => setFormData({ ...formData, items_json: e.target.value })}
                   required
@@ -136,7 +138,7 @@ const MenuManagement = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Button type="submit" variant="contained" size="large">Menüyü Kaydet</Button>
+                <Button type="submit" variant="contained" size="large">{t('menu_management.save_btn')}</Button>
               </Grid>
             </Grid>
           </form>

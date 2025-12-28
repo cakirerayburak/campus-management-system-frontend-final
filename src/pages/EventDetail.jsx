@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import { useTranslation } from 'react-i18next';
+import {
   Container, Paper, Typography, Button, Box, Chip, Grid, Card, CardContent,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Divider, Alert
 } from '@mui/material';
@@ -15,6 +16,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { QRCodeSVG } from 'qrcode.react';
 
 const EventDetail = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
@@ -33,7 +35,7 @@ const EventDetail = () => {
       setEvent(res.data.data);
     } catch (error) {
       console.error(error);
-      toast.error('Etkinlik yüklenemedi');
+      toast.error(t('events.load_error'));
       navigate('/events');
     } finally {
       setLoading(false);
@@ -43,12 +45,10 @@ const EventDetail = () => {
   const handleRegister = async () => {
     try {
       const res = await registerEvent(id, registerModal.customFields);
-      toast.success('Etkinliğe başarıyla kayıt oldunuz!');
-      setRegistrationSuccess(res.data.data);
       setRegisterModal({ open: false, customFields: {} });
       fetchEventDetail(); // Kontenjan güncellemesi için
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Kayıt başarısız');
+      toast.error(error.response?.data?.error || t('events.register_failed'));
     }
   };
 
@@ -56,7 +56,7 @@ const EventDetail = () => {
     return (
       <Layout>
         <Container maxWidth="md" sx={{ mt: 4 }}>
-          <Typography>Yükleniyor...</Typography>
+          <Typography>{t('common.loading')}</Typography>
         </Container>
       </Layout>
     );
@@ -73,12 +73,12 @@ const EventDetail = () => {
   return (
     <Layout>
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-        <Button 
-          startIcon={<ArrowBackIcon />} 
+        <Button
+          startIcon={<ArrowBackIcon />}
           onClick={() => navigate('/events')}
           sx={{ mb: 2 }}
         >
-          Geri Dön
+          {t('event_detail.back')}
         </Button>
 
         <Paper sx={{ p: 4, mb: 3 }}>
@@ -100,13 +100,13 @@ const EventDetail = () => {
               <Box display="flex" alignItems="center" gap={1}>
                 <EventIcon color="action" />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Tarih</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('event_detail.date')}</Typography>
                   <Typography variant="body1">
-                    {new Date(event.date).toLocaleDateString('tr-TR', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
+                    {new Date(event.date).toLocaleDateString(i18n.language, {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
                     })}
                   </Typography>
                 </Box>
@@ -117,7 +117,7 @@ const EventDetail = () => {
               <Box display="flex" alignItems="center" gap={1}>
                 <AccessTimeIcon color="action" />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Saat</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('event_detail.time')}</Typography>
                   <Typography variant="body1">
                     {event.start_time} - {event.end_time}
                   </Typography>
@@ -129,7 +129,7 @@ const EventDetail = () => {
               <Box display="flex" alignItems="center" gap={1}>
                 <LocationOnIcon color="action" />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Konum</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('event_detail.location')}</Typography>
                   <Typography variant="body1">{event.location}</Typography>
                 </Box>
               </Box>
@@ -139,8 +139,8 @@ const EventDetail = () => {
               <Box display="flex" alignItems="center" gap={1}>
                 <PeopleIcon color="action" />
                 <Box>
-                  <Typography variant="body2" color="text.secondary">Kontenjan</Typography>
-                  <Typography 
+                  <Typography variant="body2" color="text.secondary">{t('event_detail.capacity')}</Typography>
+                  <Typography
                     variant="body1"
                     color={isFull ? 'error.main' : 'success.main'}
                     fontWeight="bold"
@@ -154,35 +154,35 @@ const EventDetail = () => {
 
           {event.is_paid && event.price > 0 && (
             <Alert severity="info" sx={{ mt: 2 }}>
-              Bu etkinlik ücretlidir: <strong>{event.price} ₺</strong>
+              {t('event_detail.paid_alert')} <strong>{event.price} ₺</strong>
             </Alert>
           )}
 
           {event.registration_deadline && (
-            <Alert 
-              severity={isDeadlinePassed ? 'error' : 'warning'} 
+            <Alert
+              severity={isDeadlinePassed ? 'error' : 'warning'}
               sx={{ mt: 2 }}
             >
-              Son kayıt tarihi: {new Date(event.registration_deadline).toLocaleDateString('tr-TR')}
-              {isDeadlinePassed && ' (Süresi dolmuş)'}
+              {t('event_detail.deadline_alert')} {new Date(event.registration_deadline).toLocaleDateString(i18n.language)}
+              {isDeadlinePassed && ` ${t('event_detail.deadline_passed')}`}
             </Alert>
           )}
 
           {isFull && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              Kontenjan dolu
+              {t('event_detail.full_alert')}
             </Alert>
           )}
 
           <Box sx={{ mt: 3 }}>
-            <Button 
-              variant="contained" 
-              size="large" 
+            <Button
+              variant="contained"
+              size="large"
               fullWidth
               onClick={() => setRegisterModal({ open: true, customFields: {} })}
               disabled={!canRegister}
             >
-              {isFull ? 'Kontenjan Dolu' : isDeadlinePassed ? 'Kayıt Süresi Dolmuş' : 'Kayıt Ol'}
+              {isFull ? t('event_detail.full_btn') : isDeadlinePassed ? t('event_detail.expired_btn') : t('event_detail.register_btn')}
             </Button>
           </Box>
         </Paper>
@@ -190,19 +190,19 @@ const EventDetail = () => {
         {/* Kayıt Başarı Modal */}
         {registrationSuccess && (
           <Dialog open={!!registrationSuccess} onClose={() => setRegistrationSuccess(null)} maxWidth="sm" fullWidth>
-            <DialogTitle>Kayıt Başarılı!</DialogTitle>
+            <DialogTitle>{t('event_detail.success_title')}</DialogTitle>
             <DialogContent>
               <Box sx={{ textAlign: 'center', py: 2 }}>
                 {registrationSuccess.qrCodeImage && (
                   <>
                     <QRCodeSVG value={registrationSuccess.qr_code || registrationSuccess.qrCodeImage} size={250} />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                      Etkinlik girişinde bu QR kodu gösteriniz.
+                      {t('my_events.qr_desc')}
                     </Typography>
                   </>
                 )}
                 <Typography variant="body1" sx={{ mt: 2 }}>
-                  Etkinliğe başarıyla kayıt oldunuz!
+                  {t('event_detail.success_desc')}
                 </Typography>
               </Box>
             </DialogContent>
@@ -211,10 +211,10 @@ const EventDetail = () => {
                 setRegistrationSuccess(null);
                 navigate('/my-events');
               }}>
-                Kayıtlı Etkinliklerim
+                {t('event_detail.my_events_btn')}
               </Button>
               <Button variant="contained" onClick={() => setRegistrationSuccess(null)}>
-                Tamam
+                {t('common.close')}
               </Button>
             </DialogActions>
           </Dialog>
@@ -222,25 +222,25 @@ const EventDetail = () => {
 
         {/* Kayıt Modal */}
         <Dialog open={registerModal.open} onClose={() => setRegisterModal({ open: false, customFields: {} })} maxWidth="sm" fullWidth>
-          <DialogTitle>Etkinliğe Kayıt Ol</DialogTitle>
+          <DialogTitle>{t('event_detail.modal_title')}</DialogTitle>
           <DialogContent>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {event.title} etkinliğine kayıt olmak istediğinize emin misiniz?
+              {event.title} {t('event_detail.modal_desc')}
             </Typography>
             {event.is_paid && event.price > 0 && (
               <Alert severity="warning" sx={{ mb: 2 }}>
-                Bu etkinlik ücretlidir: {event.price} ₺ (Cüzdanınızdan düşülecektir)
+                {t('event_detail.paid_alert')} {event.price} ₺
               </Alert>
             )}
-            
+
             {/* Custom Fields Form */}
             <Box sx={{ mt: 2 }}>
               <Typography variant="subtitle2" gutterBottom>
-                Ek Bilgiler (Opsiyonel)
+                {t('event_detail.extra_info')}
               </Typography>
               <TextField
                 fullWidth
-                label="Telefon Numarası"
+                label={t('event_detail.phone')}
                 value={registerModal.customFields.phone || ''}
                 onChange={(e) => setRegisterModal({
                   ...registerModal,
@@ -251,7 +251,7 @@ const EventDetail = () => {
               />
               <TextField
                 fullWidth
-                label="Özel Notlar"
+                label={t('event_detail.notes')}
                 value={registerModal.customFields.notes || ''}
                 onChange={(e) => setRegisterModal({
                   ...registerModal,
@@ -259,16 +259,16 @@ const EventDetail = () => {
                 })}
                 multiline
                 rows={3}
-                placeholder="Etkinlikle ilgili özel notlarınız..."
+                placeholder={t('event_detail.notes_placeholder')}
               />
             </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setRegisterModal({ open: false, customFields: {} })}>
-              İptal
+              {t('common.cancel')}
             </Button>
             <Button variant="contained" onClick={handleRegister}>
-              Kayıt Ol
+              {t('common.save')}
             </Button>
           </DialogActions>
         </Dialog>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem,
   Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Container,
@@ -32,6 +33,7 @@ import BarChartIcon from '@mui/icons-material/BarChart'; // Raporlar için
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import DescriptionIcon from '@mui/icons-material/Description';
+import LanguageIcon from '@mui/icons-material/Language';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -42,6 +44,7 @@ const drawerWidth = 280;
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
   const { isDarkMode, toggleTheme } = useCustomTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,20 +62,28 @@ const Layout = ({ children }) => {
     navigate('/login');
   };
 
+  const changeLanguage = () => {
+    const languages = ['tr', 'en', 'it'];
+    const currentIndex = languages.indexOf(i18n.language);
+    const nextIndex = (currentIndex + 1) % languages.length;
+    i18n.changeLanguage(languages[nextIndex]);
+  };
+
+
   // --- MENÜ YAPILANDIRMASI ---
 
   // 1. Temel Menü (Herkes için)
   let menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Profilim', icon: <PersonIcon />, path: '/profile' },
+    { text: t('menu.dashboard'), icon: <DashboardIcon />, path: '/dashboard' },
+    { text: t('menu.profile'), icon: <PersonIcon />, path: '/profile' },
   ];
 
   // 2. Kampüs Yaşamı (Part 3 - Ortak)
   menuItems.push(
-    { text: 'Cüzdan', icon: <AccountBalanceWalletIcon />, path: '/wallet' },
-    { text: 'Ders Programı', icon: <CalendarMonthIcon />, path: '/schedule' },
-    { text: 'Yemek Menüsü', icon: <RestaurantIcon />, path: '/meals/menu' },
-    { text: 'Etkinlikler', icon: <EventIcon />, path: '/events' },
+    { text: t('menu.wallet'), icon: <AccountBalanceWalletIcon />, path: '/wallet' },
+    { text: t('menu.schedule'), icon: <CalendarMonthIcon />, path: '/schedule' },
+    { text: t('menu.menu'), icon: <RestaurantIcon />, path: '/meals/menu' },
+    { text: t('menu.events'), icon: <EventIcon />, path: '/events' },
   );
 
   // 3. Rol Bazlı Linkler
@@ -80,59 +91,59 @@ const Layout = ({ children }) => {
     if (user.role === 'student') {
       // Öğrenci Akademik
       menuItems.push(
-        { text: 'Derslerim', icon: <LibraryBooksIcon />, path: '/my-courses' },
-        { text: 'Yoklama Ver', icon: <QrCodeScannerIcon />, path: '/attendance/student' },
-        { text: 'Yoklama Geçmişi', icon: <HistoryIcon />, path: '/attendance/my-history' },
-        { text: 'Notlarım', icon: <GradeIcon />, path: '/grades/my-grades' },
-        { text: 'Mazeret Bildir', icon: <SickIcon />, path: '/attendance/excuse-request' },
+        { text: t('menu.my_courses'), icon: <LibraryBooksIcon />, path: '/my-courses' },
+        { text: t('menu.give_attendance'), icon: <QrCodeScannerIcon />, path: '/attendance/student' },
+        { text: t('menu.attendance_history'), icon: <HistoryIcon />, path: '/attendance/my-history' },
+        { text: t('menu.grades'), icon: <GradeIcon />, path: '/grades/my-grades' },
+        { text: t('menu.excuse_request'), icon: <SickIcon />, path: '/attendance/excuse-request' },
         // Part 3 Detay
-        { text: 'Rezervasyonlarım', icon: <ConfirmationNumberIcon />, path: '/meals/reservations' },
-        { text: 'Etkinliklerim', icon: <ConfirmationNumberIcon />, path: '/my-events' }
+        { text: t('menu.reservations'), icon: <ConfirmationNumberIcon />, path: '/meals/reservations' },
+        { text: t('menu.my_events'), icon: <ConfirmationNumberIcon />, path: '/my-events' }
       );
     }
 
     if (user.role === 'faculty') {
       // Hoca Akademik
       menuItems.push(
-        { text: 'Yoklama Başlat', icon: <QrCodeIcon />, path: '/attendance/faculty' },
-        { text: 'Raporlar', icon: <AssessmentIcon />, path: '/attendance/reports' },
-        { text: 'Not Girişi', icon: <GradeIcon />, path: '/grades/gradebook' },
-        { text: 'Mazeret Onayı', icon: <SickIcon />, path: '/attendance/excuse-approval' },
-        { text: 'Etkinliklerim', icon: <ConfirmationNumberIcon />, path: '/my-events' }
+        { text: t('menu.start_attendance'), icon: <QrCodeIcon />, path: '/attendance/faculty' },
+        { text: t('menu.reports'), icon: <AssessmentIcon />, path: '/attendance/reports' },
+        { text: t('menu.grade_entry'), icon: <GradeIcon />, path: '/grades/gradebook' },
+        { text: t('menu.excuse_approval'), icon: <SickIcon />, path: '/attendance/excuse-approval' },
+        { text: t('menu.my_events'), icon: <ConfirmationNumberIcon />, path: '/my-events' }
       );
     }
 
     if (user.role === 'admin') {
       // Admin Yönetim
       menuItems.push(
-        { text: 'Admin Dashboard', icon: <BarChartIcon />, path: '/admin/dashboard' },
-        { text: 'İşlem Logları', icon: <HistoryIcon />, path: '/admin/audit-logs' },
-        { text: 'Ders Yönetimi', icon: <SettingsIcon />, path: '/admin/courses' },
-        { text: 'Şube & Program', icon: <ClassIcon />, path: '/admin/sections' },
+        { text: t('menu.admin_dashboard'), icon: <BarChartIcon />, path: '/admin/dashboard' },
+        { text: t('menu.audit_logs'), icon: <HistoryIcon />, path: '/admin/audit-logs' },
+        { text: t('menu.course_management'), icon: <SettingsIcon />, path: '/admin/courses' },
+        { text: t('menu.section_program'), icon: <ClassIcon />, path: '/admin/sections' },
         // Part 3 Yönetim
-        { text: 'Menü Yönetimi', icon: <RestaurantIcon />, path: '/admin/menus' },
-        { text: 'Etkinlik Yönetimi', icon: <EventIcon />, path: '/admin/events' },
+        { text: t('menu.menu_management'), icon: <RestaurantIcon />, path: '/admin/menus' },
+        { text: t('menu.event_management'), icon: <EventIcon />, path: '/admin/events' },
         // Part 3: Yeni Eklenen Admin Sayfaları
-        { text: 'Oto. Ders Programı', icon: <CalendarMonthIcon />, path: '/admin/scheduling/generate' },
-        { text: 'Bölüm Programları', icon: <SchoolIcon />, path: '/admin/schedules/departments' },
-        { text: 'Ekipman Yönetimi', icon: <BuildIcon />, path: '/admin/equipment' },
-        { text: 'Kaynak Raporları', icon: <BarChartIcon />, path: '/admin/reports' }
+        { text: t('menu.auto_schedule'), icon: <CalendarMonthIcon />, path: '/admin/scheduling/generate' },
+        { text: t('menu.dept_schedules'), icon: <SchoolIcon />, path: '/admin/schedules/departments' },
+        { text: t('menu.equipment_management'), icon: <BuildIcon />, path: '/admin/equipment' },
+        { text: t('menu.resource_reports'), icon: <BarChartIcon />, path: '/admin/reports' }
       );
     }
 
     // Personel veya Admin için QR Okuyucu
     if (user.role === 'staff' || user.role === 'admin') {
       menuItems.push(
-        { text: 'QR Tarayıcı', icon: <QrCodeScannerIcon />, path: '/staff/scanner' }
+        { text: t('menu.qr_scanner'), icon: <QrCodeScannerIcon />, path: '/staff/scanner' }
       );
     }
   }
 
   // 4. Alt Menü (Genel)
   menuItems.push(
-    { text: 'Bildirimler', icon: <NotificationsIcon />, path: '/notifications' },
-    { text: 'Ders Kataloğu', icon: <SchoolIcon />, path: '/courses' },
-    { text: 'Duyurular', icon: <CampaignIcon />, path: '/announcements' },
+    { text: t('menu.notifications'), icon: <NotificationsIcon />, path: '/notifications' },
+    { text: t('menu.course_catalog'), icon: <SchoolIcon />, path: '/courses' },
+    { text: t('menu.announcements'), icon: <CampaignIcon />, path: '/announcements' },
   );
 
   const drawerContent = (
@@ -165,7 +176,7 @@ const Layout = ({ children }) => {
       {/* Menü Listesi */}
       <List sx={{ px: 2, py: 3, flexGrow: 1, overflowY: 'auto' }}>
         <Typography variant="caption" sx={{ px: 2, mb: 1, display: 'block', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
-          MENÜ
+          {t('menu.menu_title')}
         </Typography>
         {menuItems.map((item, index) => {
           const isActive = location.pathname === item.path;
@@ -197,11 +208,11 @@ const Layout = ({ children }) => {
       <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
         <ListItem button onClick={() => navigate('/terms')} sx={{ borderRadius: 2, color: '#9ca3af', mb: 1, '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' } }}>
           <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><DescriptionIcon /></ListItemIcon>
-          <ListItemText primary="Kullanım Koşulları" primaryTypographyProps={{ fontSize: '0.9rem' }} />
+          <ListItemText primary={t('menu.terms')} primaryTypographyProps={{ fontSize: '0.9rem' }} />
         </ListItem>
         <ListItem button onClick={handleLogout} sx={{ borderRadius: 2, color: '#ef4444', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.1)' } }}>
           <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><LogoutIcon /></ListItemIcon>
-          <ListItemText primary="Güvenli Çıkış" />
+          <ListItemText primary={t('menu.logout')} />
         </ListItem>
       </Box>
     </Box>
@@ -247,6 +258,28 @@ const Layout = ({ children }) => {
             </IconButton>
           </Tooltip>
 
+          <Tooltip
+            title={
+              i18n.language === 'tr'
+                ? 'Switch to English'
+                : i18n.language === 'en'
+                  ? 'Passa all’italiano'
+                  : 'Türkçe’ye geç'
+            }
+          >
+            <IconButton
+              onClick={changeLanguage}
+              color="inherit"
+              sx={{ mr: 1 }}
+            >
+              <LanguageIcon />
+              <Typography variant="caption" sx={{ ml: 0.5, fontWeight: 'bold' }}>
+                {i18n.language.toUpperCase()}
+              </Typography>
+            </IconButton>
+          </Tooltip>
+
+
           {/* Notification Bell */}
           <NotificationBell />
 
@@ -255,7 +288,7 @@ const Layout = ({ children }) => {
               <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{user.name}</Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  {user.role === 'student' ? 'Öğrenci' : user.role === 'faculty' ? 'Akademisyen' : user.role === 'admin' ? 'Yönetici' : 'Personel'}
+                  {t(`roles.${user.role}`)}
                 </Typography>
               </Box>
             )}
@@ -283,9 +316,9 @@ const Layout = ({ children }) => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={() => { navigate('/profile'); handleClose(); }} sx={{ py: 1.5 }}>Profil Ayarları</MenuItem>
+            <MenuItem onClick={() => { navigate('/profile'); handleClose(); }} sx={{ py: 1.5 }}>{t('menu.profile_settings')}</MenuItem>
             <Divider />
-            <MenuItem onClick={handleLogout} sx={{ color: 'error.main', py: 1.5 }}>Oturumu Kapat</MenuItem>
+            <MenuItem onClick={handleLogout} sx={{ color: 'error.main', py: 1.5 }}>{t('menu.logout')}</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>

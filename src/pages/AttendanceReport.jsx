@@ -17,10 +17,12 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 
 // EXCEL KÜTÜPHANELERİ
+import { useTranslation } from 'react-i18next';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
 const AttendanceReport = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [sections, setSections] = useState([]);
   const [selectedSection, setSelectedSection] = useState('');
@@ -56,7 +58,7 @@ const AttendanceReport = () => {
       setSessions(sortedSessions);
     } catch (error) {
       console.error("Rapor alınamadı", error);
-      toast.error("Rapor verisi çekilemedi.");
+      toast.error(t('attendance_report.actions.error_operation'));
     } finally {
       setLoading(false);
     }
@@ -70,37 +72,39 @@ const AttendanceReport = () => {
   // --- EXCEL DIŞA AKTARMA FONKSİYONU (YENİ) ---
   const handleExportToExcel = () => {
     if (sessions.length === 0) {
-      toast.warning("Dışa aktarılacak veri yok.");
+      toast.warning(t('attendance_report.actions.export_warning'));
       return;
     }
 
     const excelData = [];
 
     sessions.forEach(session => {
-      const dateStr = new Date(session.date).toLocaleDateString('tr-TR');
+      const dateStr = new Date(session.date).toLocaleDateString(i18n.language);
 
       if (session.records.length === 0) {
         // Katılımcı olmayan oturumları da raporda göster (İsteğe bağlı)
-        excelData.push({
-          'Tarih': dateStr,
-          'Saat': `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`,
-          'Öğrenci No': '-',
-          'Ad Soyad': '-',
-          'Giriş Saati': '-',
-          'Mesafe': '-',
-          'Durum': 'Katılımcı Yok'
-        });
+        const row = {};
+        row[t('attendance_report.date')] = dateStr;
+        row[t('attendance_report.time')] = `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`;
+        row[t('attendance_report.table.student_no')] = '-';
+        row[t('attendance_report.table.name')] = '-';
+        row[t('attendance_report.table.check_in_time')] = '-';
+        row[t('attendance_report.table.distance')] = '-';
+        row[t('attendance_report.table.status_action')] = t('attendance_report.table.no_participation');
+        excelData.push(row);
       } else {
         session.records.forEach(record => {
-          excelData.push({
-            'Tarih': dateStr,
-            'Saat': `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`,
-            'Öğrenci No': record.student?.student_number || 'Belirsiz',
-            'Ad Soyad': record.student?.user?.name || 'İsimsiz',
-            'Giriş Saati': new Date(record.check_in_time).toLocaleTimeString('tr-TR'),
-            'Mesafe': `${Math.round(record.distance_from_center)}m`,
-            'Durum': record.is_flagged ? `ŞÜPHELİ: ${record.flag_reason}` : 'VAR'
-          });
+          const row = {};
+          row[t('attendance_report.date')] = dateStr;
+          row[t('attendance_report.time')] = `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`;
+          row[t('attendance_report.table.student_no')] = record.student?.student_number || 'Belirsiz';
+          row[t('attendance_report.table.name')] = record.student?.user?.name || 'İsimsiz';
+          row[t('attendance_report.table.check_in_time')] = new Date(record.check_in_time).toLocaleTimeString(i18n.language);
+          row[t('attendance_report.table.distance')] = `${Math.round(record.distance_from_center)}m`;
+          row[t('attendance_report.table.status_action')] = record.is_flagged ?
+            `${t('attendance_report.status.suspicious')}: ${record.flag_reason}` :
+            t('attendance_report.status.present');
+          excelData.push(row);
         });
       }
     });
@@ -117,8 +121,8 @@ const AttendanceReport = () => {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
 
-    saveAs(dataBlob, `Yoklama_Raporu_Section${selectedSection}_${new Date().toLocaleDateString()}.xlsx`);
-    toast.success("Excel dosyası indirildi.");
+    saveAs(dataBlob, `Attendance_Report_Section${selectedSection}_${new Date().toLocaleDateString(i18n.language).replace(/\//g, '-')}.xlsx`);
+    toast.success(t('attendance_report.actions.export_success'));
   };
   // ---------------------------------------------
 
@@ -126,22 +130,22 @@ const AttendanceReport = () => {
   const handleApprove = async (recordId) => {
     try {
       await api.put(`/attendance/records/${recordId}`, { action: 'approve' });
-      toast.success("Yoklama onaylandı.");
+      toast.success(t('attendance_report.actions.success_approve'));
       fetchReport();
     } catch (error) {
-      toast.error("İşlem başarısız.");
+      toast.error(t('attendance_report.actions.error_operation'));
     }
   };
 
   // Reddetme Fonksiyonu
   const handleReject = async (recordId) => {
-    if (!window.confirm("Bu yoklama kaydını silmek (reddetmek) istediğinize emin misiniz?")) return;
+    if (!window.confirm(t('attendance_report.actions.confirm_reject'))) return;
     try {
       await api.delete(`/attendance/records/${recordId}`);
-      toast.success("Yoklama reddedildi (silindi).");
+      toast.success(t('attendance_report.actions.success_reject'));
       fetchReport();
     } catch (error) {
-      toast.error("İşlem başarısız.");
+      toast.error(t('attendance_report.actions.error_operation'));
     }
   };
 
@@ -157,7 +161,7 @@ const AttendanceReport = () => {
         mb: 4
       }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-          Yoklama Raporları
+          {t('attendance_report.title')}
         </Typography>
 
         <Button
@@ -168,7 +172,7 @@ const AttendanceReport = () => {
           disabled={loading || !selectedSection || sessions.length === 0}
           size="small"
         >
-          Excel'e Aktar
+          {t('attendance_report.export_excel')}
         </Button>
       </Box>
 
@@ -176,11 +180,11 @@ const AttendanceReport = () => {
       <Paper sx={{ p: 3, mb: 4, borderRadius: 0, borderTop: '4px solid #1976d2' }}>
         <TextField
           select
-          label="Ders Şubesi Seçin"
+          label={t('attendance_report.select_section')}
           value={selectedSection}
           onChange={(e) => setSelectedSection(e.target.value)}
           fullWidth
-          helperText="Raporunu görüntülemek istediğiniz dersi seçin."
+          helperText={t('attendance_report.helper_text')}
         >
           {sections.map((sec) => (
             <MenuItem key={sec.id} value={sec.id}>
@@ -194,21 +198,21 @@ const AttendanceReport = () => {
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
       ) : selectedSection && sessions.length === 0 ? (
-        <Alert severity="info">Bu ders için henüz hiç yoklama alınmamış.</Alert>
+        <Alert severity="info">{t('attendance_report.no_records')}</Alert>
       ) : (
         sessions.map((session) => (
           <Accordion key={session.id} disableGutters sx={{ mb: 1, border: '1px solid #e0e0e0', boxShadow: 'none' }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', pr: 2 }}>
                 <Typography sx={{ fontWeight: 'bold' }}>
-                  {new Date(session.date).toLocaleDateString('tr-TR')}
+                  {new Date(session.date).toLocaleDateString(i18n.language)}
                 </Typography>
                 <Box>
                   <Typography variant="caption" sx={{ mr: 2 }}>
-                    Saat: {session.start_time?.slice(0, 5)} - {session.end_time?.slice(0, 5)}
+                    {t('attendance_report.time')}: {session.start_time?.slice(0, 5)} - {session.end_time?.slice(0, 5)}
                   </Typography>
                   <Chip
-                    label={`${session.records.length} Öğrenci`}
+                    label={t('attendance_report.student_count', { count: session.records.length })}
                     color="primary"
                     size="small"
                     variant="outlined"
@@ -221,53 +225,53 @@ const AttendanceReport = () => {
                 <Table size="small" sx={{ minWidth: 500 }}>
                   <TableHead sx={{ bgcolor: '#f5f5f5' }}>
                     <TableRow>
-                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Öğrenci No</TableCell>
-                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Ad Soyad</TableCell>
-                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Giriş Saati</TableCell>
-                      <TableCell>Mesafe</TableCell>
-                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Durum & İşlem</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>{t('attendance_report.table.student_no')}</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>{t('attendance_report.table.name')}</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>{t('attendance_report.table.check_in_time')}</TableCell>
+                      <TableCell>{t('attendance_report.table.distance')}</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>{t('attendance_report.table.status_action')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {session.records.length === 0 ? (
-                      <TableRow><TableCell colSpan={5} align="center">Katılım yok.</TableCell></TableRow>
+                      <TableRow><TableCell colSpan={5} align="center">{t('attendance_report.table.no_participation')}</TableCell></TableRow>
                     ) : (
                       session.records.map((record) => (
                         <TableRow key={record.id}>
                           <TableCell sx={{ whiteSpace: 'nowrap' }}>{record.student?.student_number}</TableCell>
                           <TableCell sx={{ whiteSpace: 'nowrap' }}>{record.student?.user?.name}</TableCell>
                           <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                            {new Date(record.check_in_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(record.check_in_time).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}
                           </TableCell>
                           <TableCell>{Math.round(record.distance_from_center)}m</TableCell>
                           <TableCell>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                               {record.is_flagged ? (
                                 <>
-                                  <Tooltip title={record.flag_reason || "Şüpheli İşlem"} arrow placement="top">
+                                  <Tooltip title={record.flag_reason || t('attendance_report.status.suspicious')} arrow placement="top">
                                     <Chip
                                       icon={<InfoIcon />}
-                                      label="Şüpheli"
+                                      label={t('attendance_report.status.suspicious')}
                                       color="warning"
                                       size="small"
                                       sx={{ cursor: 'help' }}
                                     />
                                   </Tooltip>
 
-                                  <Tooltip title="Onayla">
+                                  <Tooltip title={t('attendance_report.actions.approve')}>
                                     <IconButton size="small" color="success" onClick={() => handleApprove(record.id)}>
                                       <CheckCircleIcon fontSize="small" />
                                     </IconButton>
                                   </Tooltip>
 
-                                  <Tooltip title="Reddet">
+                                  <Tooltip title={t('attendance_report.actions.reject')}>
                                     <IconButton size="small" color="error" onClick={() => handleReject(record.id)}>
                                       <DeleteIcon fontSize="small" />
                                     </IconButton>
                                   </Tooltip>
                                 </>
                               ) : (
-                                <Chip label="Var" color="success" size="small" />
+                                <Chip label={t('attendance_report.status.present')} color="success" size="small" />
                               )}
                             </Box>
                           </TableCell>

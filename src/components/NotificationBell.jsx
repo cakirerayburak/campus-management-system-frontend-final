@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import notificationService from '../services/notificationService';
+import { useTranslation } from 'react-i18next';
 
 // Kategori ikonlarını eşle
 const categoryIcons = {
@@ -65,6 +66,7 @@ const NotificationBell = () => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
 
     const open = Boolean(anchorEl);
 
@@ -159,11 +161,11 @@ const NotificationBell = () => {
         const diffHours = Math.floor(diffMins / 60);
         const diffDays = Math.floor(diffHours / 24);
 
-        if (diffMins < 1) return 'Az önce';
-        if (diffMins < 60) return `${diffMins} dk önce`;
-        if (diffHours < 24) return `${diffHours} saat önce`;
-        if (diffDays < 7) return `${diffDays} gün önce`;
-        return date.toLocaleDateString('tr-TR');
+        if (diffMins < 1) return t('notifications.just_now');
+        if (diffMins < 60) return t('notifications.mins_ago', { count: diffMins });
+        if (diffHours < 24) return t('notifications.hours_ago', { count: diffHours });
+        if (diffDays < 7) return t('notifications.days_ago', { count: diffDays });
+        return date.toLocaleDateString(i18n.language);
     };
 
     return (
@@ -214,7 +216,7 @@ const NotificationBell = () => {
                 {/* Header */}
                 <Box sx={{ px: 2, py: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="h6" fontWeight={600}>
-                        Bildirimler
+                        {t('notifications.title')}
                     </Typography>
                     {unreadCount > 0 && (
                         <Button
@@ -223,7 +225,7 @@ const NotificationBell = () => {
                             onClick={handleMarkAllRead}
                             sx={{ textTransform: 'none', fontSize: '0.75rem' }}
                         >
-                            Tümünü Oku
+                            {t('notifications.mark_all_read')}
                         </Button>
                     )}
                 </Box>
@@ -241,7 +243,7 @@ const NotificationBell = () => {
                     <Box sx={{ py: 4, textAlign: 'center' }}>
                         <NotificationsIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }} />
                         <Typography color="text.secondary">
-                            Henüz bildiriminiz yok
+                            {t('notifications.empty')}
                         </Typography>
                     </Box>
                 )}
@@ -313,7 +315,7 @@ const NotificationBell = () => {
                                 onClick={handleViewAll}
                                 sx={{ textTransform: 'none' }}
                             >
-                                Tüm Bildirimleri Görüntüle
+                                {t('notifications.view_all')}
                             </Button>
                         </Box>
                     </>

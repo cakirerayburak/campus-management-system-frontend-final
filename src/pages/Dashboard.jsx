@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Grid, Paper, Typography, Box, CircularProgress,
   Card, Avatar, List, ListItem, ListItemText, Divider, Chip, Button
@@ -16,6 +17,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -72,10 +74,10 @@ const Dashboard = () => {
     <Layout>
       <Box sx={{ mb: 5 }}>
         <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e293b', mb: 1 }}>
-          Hoş Geldin, {user?.name?.split(' ')[0]}! 👋
+          {t('welcome')}, {user?.name?.split(' ')[0]}! 👋
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          Akademik durumunu buradan takip edebilirsin.
+          {t('dashboard_desc')}
         </Typography>
       </Box>
 
@@ -86,7 +88,7 @@ const Dashboard = () => {
           <>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Genel Ortalama (GPA)"
+                title={t('gpa')}
                 value={stats?.gpa || "0.00"}
                 icon={<GradeIcon fontSize="large" />}
                 color="#ca8a04"
@@ -95,7 +97,7 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Aktif Dersler"
+                title={t('active_courses')}
                 value={stats?.activeCourses || 0}
                 icon={<ClassIcon fontSize="large" />}
                 color="#2563eb"
@@ -104,7 +106,7 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Yoklama Katılımı"
+                title={t('attendance')}
                 value={stats?.totalAttendance || 0}
                 icon={<EventAvailableIcon fontSize="large" />}
                 color="#16a34a"
@@ -113,7 +115,7 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Öğrenci Numarası"
+                title={t('student_number')}
                 value={stats?.studentNumber || "-"}
                 icon={<SchoolIcon fontSize="large" />}
                 color="#9333ea"
@@ -128,7 +130,7 @@ const Dashboard = () => {
           <>
             <Grid item xs={12} sm={6} md={6}>
               <StatCard
-                title="Aktif Şubeler"
+                title={t('active_sections')}
                 value={stats?.activeSections || 0}
                 icon={<ClassIcon fontSize="large" />}
                 color="#2563eb"
@@ -137,8 +139,8 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={6}>
               <StatCard
-                title="Unvan"
-                value={user?.facultyProfile?.title || "Öğr. Üyesi"}
+                title={t('title')}
+                value={user?.facultyProfile?.title || t('common.faculty')}
                 icon={<PersonIcon fontSize="large" />}
                 color="#0891b2"
                 bgColor="#cffafe"
@@ -154,7 +156,7 @@ const Dashboard = () => {
               <Box sx={{ p: 1, borderRadius: 1.5, bgcolor: '#e0f2fe', color: '#0284c7' }}>
                 <CampaignIcon />
               </Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>Son Duyurular</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('latest_announcements')}</Typography>
             </Box>
             <List sx={{ p: 0 }}>
               {stats?.announcements?.length > 0 ? (
@@ -168,7 +170,7 @@ const Dashboard = () => {
                               {ann.title}
                             </Typography>
                             {ann.priority === 'high' &&
-                              <Chip label="Önemli" size="small" sx={{ bgcolor: '#fee2e2', color: '#dc2626', height: 24, fontWeight: 600, fontSize: '0.7rem' }} />
+                              <Chip label={t('important')} size="small" sx={{ bgcolor: '#fee2e2', color: '#dc2626', height: 24, fontWeight: 600, fontSize: '0.7rem' }} />
                             }
                           </Box>
                         }
@@ -178,7 +180,7 @@ const Dashboard = () => {
                               {ann.content}
                             </Typography>
                             <Typography variant="caption" color="text.disabled" fontWeight="500">
-                              {new Date(ann.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              {new Date(ann.createdAt).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
                           </Box>
                         }
@@ -189,7 +191,7 @@ const Dashboard = () => {
                 ))
               ) : (
                 <Box sx={{ p: 5, textAlign: 'center' }}>
-                  <Typography color="text.secondary">Henüz yayınlanmış bir duyuru yok.</Typography>
+                  <Typography color="text.secondary">{t('no_announcements')}</Typography>
                 </Box>
               )}
             </List>
@@ -211,9 +213,9 @@ const Dashboard = () => {
             minHeight: 250,
             boxShadow: '0 10px 30px -10px rgba(99, 102, 241, 0.5)'
           }}>
-            <Typography variant="h5" fontWeight="700" gutterBottom>Akademik Takvim</Typography>
+            <Typography variant="h5" fontWeight="700" gutterBottom>{t('academic_calendar')}</Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, mb: 3 }}>
-              Ders programınız ve sınav tarihlerinizi yakında buradan takip edebileceksiniz.
+              {t('calendar_desc')}
             </Typography>
             <Button
               variant="contained"
@@ -224,7 +226,7 @@ const Dashboard = () => {
                 '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' }
               }}
             >
-              Takvimi Görüntüle
+              {t('view_calendar')}
             </Button>
           </Paper>
         </Grid>

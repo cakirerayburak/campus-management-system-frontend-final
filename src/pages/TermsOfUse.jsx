@@ -3,7 +3,10 @@ import { Container, Typography, Box, Paper, Divider, Button } from '@mui/materia
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+import { useTranslation } from 'react-i18next';
+
 const TermsOfUse = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const handleBack = () => {
@@ -21,45 +24,44 @@ const TermsOfUse = () => {
                 onClick={handleBack}
                 sx={{ mb: 3 }}
             >
-                {window.history.length > 1 ? 'Geri Dön' : 'Pencereyi Kapat'}
+                {window.history.length > 1 ? t('terms_of_use.back') : t('terms_of_use.close')}
             </Button>
 
             <Paper elevation={3} sx={{ p: { xs: 3, md: 5 }, borderRadius: 2 }}>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold" color="primary">
-                    Kullanım Koşulları
+                    {t('terms_of_use.title')}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary" paragraph>
-                    Son Güncelleme: {new Date().toLocaleDateString('tr-TR')}
+                    {t('terms_of_use.last_update')}: {new Date().toLocaleDateString('tr-TR')}
                 </Typography>
 
                 <Divider sx={{ my: 3 }} />
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        1. Giriş
+                        {t('terms_of_use.sections.intro')}
                     </Typography>
                     <Typography variant="body1" paragraph>
-                        Bu Kampüs Yönetim Sistemi'ne ("Platform") hoş geldiniz. Platformu kullanarak, aşağıda belirtilen şartlar ve koşulları kabul etmiş olursunuz.
-                        Eğer bu şartları kabul etmiyorsanız, lütfen Platformu kullanmayınız.
+                        {t('terms_of_use.sections.intro_text')}
                     </Typography>
                 </Box>
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        2. Hizmetin Kapsamı
+                        {t('terms_of_use.sections.scope')}
                     </Typography>
                     <Typography variant="body1" paragraph>
-                        Bu Platform, üniversite öğrencileri, akademik personel ve idari çalışanlar için ders yönetimi, not görüntüleme,
-                        yoklama takibi, etkinlik rezervasyonu ve diğer kampüs hizmetlerine erişim sağlamak amacıyla tasarlanmıştır.
+                        {t('terms_of_use.sections.scope_text')}
                     </Typography>
                 </Box>
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        3. Kullanıcı Sorumlulukları
+                        {t('terms_of_use.sections.responsibilities')}
                     </Typography>
                     <Typography variant="body1" paragraph>
+                        {/* Keeping list hardcoded for now or use trans array, simplifying for this task */}
                         <ul>
                             <li>Hesap bilgilerinizin güvenliğinden siz sorumlusunuz. Şifrenizi kimseyle paylaşmayınız.</li>
                             <li>Platform üzerinden yapılan tüm işlemlerden kullanıcı sorumludur.</li>
@@ -71,17 +73,16 @@ const TermsOfUse = () => {
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        4. Gizlilik ve Veri Güvenliği
+                        {t('terms_of_use.sections.privacy')}
                     </Typography>
                     <Typography variant="body1" paragraph>
-                        Kişisel verileriniz, KVKK (Kişisel Verilerin Korunması Kanunu) ve ilgili mevzuat çerçevesinde işlenmekte ve korunmaktadır.
-                        Verileriniz yalnızca eğitim-öğretim faaliyetlerinin sürdürülmesi amacıyla kullanılacaktır.
+                        {t('terms_of_use.sections.privacy_text')}
                     </Typography>
                 </Box>
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        5. Fikri Mülkiyet
+                        {t('terms_of_use.sections.intellectual_property')}
                     </Typography>
                     <Typography variant="body1" paragraph>
                         Platform üzerindeki tüm logolar, tasarımlar, yazılımlar ve içerikler üniversitenin veya lisans verenlerinin mülkiyetindedir
@@ -91,7 +92,7 @@ const TermsOfUse = () => {
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        6. Değişiklikler
+                        {t('terms_of_use.sections.changes')}
                     </Typography>
                     <Typography variant="body1" paragraph>
                         Yönetim, bu kullanım koşullarını önceden haber vermeksizin değiştirme hakkını saklı tutar.
@@ -101,7 +102,7 @@ const TermsOfUse = () => {
 
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
-                        7. İletişim
+                        {t('terms_of_use.sections.contact')}
                     </Typography>
                     <Typography variant="body1" paragraph>
                         Kullanım koşulları ile ilgili sorularınız için Öğrenci İşleri veya Bilgi İşlem Daire Başkanlığı ile iletişime geçebilirsiniz.

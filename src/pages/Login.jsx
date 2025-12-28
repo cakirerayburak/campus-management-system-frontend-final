@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import {
   Container, Box, Typography, Button, Grid, Link as MuiLink,
@@ -14,11 +15,12 @@ import { toast } from 'react-toastify';
 import FormInput from '../components/FormInput';
 
 const validationSchema = Yup.object({
-  email: Yup.string().email('Geçerli bir e-posta adresi giriniz').required('E-posta alanı zorunludur'),
-  password: Yup.string().required('Şifre alanı zorunludur'),
+  email: Yup.string().email('validation.email_invalid').required('validation.email_required'),
+  password: Yup.string().required('validation.password_required'),
 });
 
 const Login = () => {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -35,11 +37,11 @@ const Login = () => {
       setError('');
       try {
         await login(values.email, values.password);
-        toast.success('Giriş başarılı! Yönlendiriliyorsunuz...');
+        toast.success(t('login.success'));
         navigate('/dashboard');
       } catch (err) {
         // --- BEYAZ EKRAN SORUNU İÇİN GÜVENLİK KONTROLÜ ---
-        let message = 'Giriş yapılamadı. Lütfen bilgilerinizi kontrol edin.';
+        let message = t('login.failed');
 
         // Backend'den gelen hatayı kontrol et
         if (err.response?.data) {
@@ -94,21 +96,21 @@ const Login = () => {
           </Box>
 
           <Typography component="h1" variant="h5" sx={{ fontWeight: 800, color: 'text.primary', mb: 1 }}>
-            Giriş Yap
+            {t('login.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Hesabınıza erişmek için bilgilerinizi girin.
+            {t('login.desc')}
           </Typography>
 
           {error && <Alert severity="error" sx={{ width: '100%', mb: 3, borderRadius: 2 }}>{error}</Alert>}
 
           <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ width: '100%' }}>
-            <FormInput formik={formik} name="email" label="E-posta Adresi" autoFocus />
+            <FormInput formik={formik} name="email" label={t('common.email')} autoFocus />
 
             <FormInput
               formik={formik}
               name="password"
-              label="Şifre"
+              label={t('common.password')}
               type={showPassword ? 'text' : 'password'}
               InputProps={{
                 endAdornment: (
@@ -123,7 +125,7 @@ const Login = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
               <MuiLink component={Link} to="/forgot-password" variant="body2" sx={{ fontWeight: 600, textDecoration: 'none' }}>
-                Şifremi Unuttum?
+                {t('login.forgot_password')}
               </MuiLink>
             </Box>
 
@@ -135,7 +137,7 @@ const Login = () => {
               sx={{ mt: 3, mb: 3, py: 1.5, fontSize: '1rem', fontWeight: 700 }}
               disabled={formik.isSubmitting}
             >
-              {formik.isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Giriş Yap'}
+              {formik.isSubmitting ? <CircularProgress size={24} color="inherit" /> : t('login.title')}
             </Button>
 
           </Box>
@@ -143,15 +145,15 @@ const Login = () => {
           <Grid container justifyContent="center">
             <Grid item>
               <Typography variant="body2" color="text.secondary">
-                Hesabınız yok mu?{' '}
+                {t('login.no_account')}{' '}
                 <MuiLink component={Link} to="/register" variant="body2" sx={{ fontWeight: 600, textDecoration: 'none', color: 'primary.main' }}>
-                  Kayıt Ol
+                  {t('login.register')}
                 </MuiLink>
               </Typography>
             </Grid>
             <Box sx={{ mt: 2, textAlign: 'center' }}>
               <MuiLink component={Link} to="/terms" variant="caption" color="text.secondary" underline="hover">
-                Kullanım Koşulları
+                {t('common.read_terms')}
               </MuiLink>
             </Box>
           </Grid>

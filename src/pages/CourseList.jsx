@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Typography, Grid, Card, CardContent, CardActions, Button,
   Box, TextField, InputAdornment, Chip, CircularProgress, Paper
@@ -11,6 +12,7 @@ import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 const CourseList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +28,7 @@ const CourseList = () => {
       const res = await api.get(`/courses?search=${search}&active_term_only=true`);
       setCourses(res.data.data);
     } catch (error) {
-      console.error("Dersler yüklenemedi:", error);
+      console.error("Dersler yüklenemedi:", error); // Console log kalabilir debug için
     } finally {
       setLoading(false);
     }
@@ -46,10 +48,10 @@ const CourseList = () => {
       <Box sx={{ mb: 5, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { md: 'center' }, gap: 3 }}>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.02em' }}>
-            Ders Kataloğu
+            {t('courses.catalog')}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-            Üniversitedeki tüm dersleri inceleyin ve kayıt olun.
+            {t('courses.catalog_desc')}
           </Typography>
         </Box>
 
@@ -66,7 +68,7 @@ const CourseList = () => {
         >
           <TextField
             fullWidth
-            placeholder="Ders ara (Kod, İsim veya İçerik)..."
+            placeholder={t('courses.search_placeholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             InputProps={{
@@ -87,7 +89,7 @@ const CourseList = () => {
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
           <CircularProgress size={50} thickness={4} />
-          <Typography sx={{ mt: 2, color: 'text.secondary' }}>Dersler yükleniyor...</Typography>
+          <Typography sx={{ mt: 2, color: 'text.secondary' }}>{t('courses.loading')}</Typography>
         </Box>
       ) : (
         <Grid container spacing={4}>
@@ -95,7 +97,7 @@ const CourseList = () => {
             <Grid item xs={12}>
               <Paper sx={{ p: 5, textAlign: 'center', borderRadius: 4, bgcolor: 'action.hover' }}>
                 <SchoolIcon sx={{ fontSize: 60, color: 'text.disabled', mb: 2 }} />
-                <Typography variant="h6" color="text.secondary">Aradığınız kriterlere uygun ders bulunamadı.</Typography>
+                <Typography variant="h6" color="text.secondary">{t('courses.no_found')}</Typography>
               </Paper>
             </Grid>
           ) : (
@@ -125,7 +127,7 @@ const CourseList = () => {
                         sx={{ fontWeight: 700, borderRadius: 2 }}
                       />
                       <Chip
-                        label={`${course.credits} Kredi`}
+                        label={`${course.credits} ${t('courses.credits')}`}
                         variant="outlined"
                         size="small"
                         sx={{ borderColor: 'divider', color: 'text.secondary', fontWeight: 500 }}
@@ -177,7 +179,7 @@ const CourseList = () => {
                         }
                       }}
                     >
-                      Detayları Gör
+                      {t('courses.details')}
                     </Button>
                   </CardActions>
                 </Card>

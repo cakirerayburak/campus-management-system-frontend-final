@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Typography,
     Box,
@@ -73,16 +74,12 @@ const categoryColors = {
 };
 
 // Kategori isimleri
-const categoryNames = {
-    academic: 'Akademik',
-    attendance: 'Yoklama',
-    meal: 'Yemek',
-    event: 'Etkinlik',
-    payment: 'Ödeme',
-    system: 'Sistem'
-};
+// Kategori isimleri (Kaldırıldı - t fonksiyonu kullanılacak)
+// Ancak anahtarlar lazım
+const categoryKeys = ['academic', 'attendance', 'meal', 'event', 'payment', 'system'];
 
 const Notifications = () => {
+    const { t, i18n } = useTranslation();
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -117,7 +114,7 @@ const Notifications = () => {
                 });
             }
         } catch (error) {
-            toast.error('Bildirimler yüklenemedi');
+            toast.error(t('notifications.load_failed'));
         } finally {
             setLoading(false);
         }
@@ -132,7 +129,7 @@ const Notifications = () => {
                 setPreferences(response.data);
             }
         } catch (error) {
-            toast.error('Tercihler yüklenemedi');
+            toast.error(t('notifications.preferences_load_failed'));
         } finally {
             setPreferencesLoading(false);
         }
@@ -157,7 +154,7 @@ const Notifications = () => {
             );
             setUnreadCount(prev => Math.max(0, prev - 1));
         } catch (error) {
-            toast.error('İşlem başarısız');
+            toast.error(t('notifications.operation_failed'));
         }
     };
 
@@ -167,9 +164,10 @@ const Notifications = () => {
             await notificationService.markAllAsRead();
             setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
             setUnreadCount(0);
-            toast.success('Tüm bildirimler okundu olarak işaretlendi');
+            setUnreadCount(0);
+            toast.success(t('notifications.all_read_success'));
         } catch (error) {
-            toast.error('İşlem başarısız');
+            toast.error(t('notifications.operation_failed'));
         }
     };
 
@@ -178,23 +176,24 @@ const Notifications = () => {
         try {
             await notificationService.deleteNotification(notificationId);
             setNotifications(prev => prev.filter(n => n.id !== notificationId));
-            toast.success('Bildirim silindi');
+            setNotifications(prev => prev.filter(n => n.id !== notificationId));
+            toast.success(t('notifications.deleted'));
         } catch (error) {
-            toast.error('Silme işlemi başarısız');
+            toast.error(t('notifications.operation_failed'));
         }
     };
 
     // Tümünü sil
     const handleClearAll = async () => {
-        if (!window.confirm('Tüm bildirimler silinecek. Emin misiniz?')) return;
+        if (!window.confirm(t('notifications.confirm_clear'))) return;
 
         try {
             await notificationService.clearAllNotifications();
             setNotifications([]);
             setUnreadCount(0);
-            toast.success('Tüm bildirimler silindi');
+            toast.success(t('notifications.all_deleted'));
         } catch (error) {
-            toast.error('İşlem başarısız');
+            toast.error(t('notifications.operation_failed'));
         }
     };
 
@@ -205,7 +204,7 @@ const Notifications = () => {
             setPreferences(newPreferences);
             await notificationService.updatePreferences({ [field]: value });
         } catch (error) {
-            toast.error('Tercih güncellenemedi');
+            toast.error(t('notifications.preference_update_failed'));
         }
     };
 
@@ -222,7 +221,7 @@ const Notifications = () => {
     // Tarih formatla
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleString('tr-TR', {
+        return date.toLocaleString(i18n.language, {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -245,18 +244,18 @@ const Notifications = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                     <NotificationsIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: 'primary.main' }} />
                     <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-                        Bildirimler
+                        {t('notifications.title')}
                     </Typography>
                     {unreadCount > 0 && (
                         <Chip
-                            label={isMobile ? unreadCount : `${unreadCount} okunmamış`}
+                            label={isMobile ? unreadCount : `${unreadCount} ${t('notifications.unread')}`}
                             color="error"
                             size="small"
                         />
                     )}
                 </Box>
                 <Box>
-                    <Tooltip title="Ayarlar">
+                    <Tooltip title={t('common.settings')}>
                         <IconButton onClick={() => { setSettingsOpen(true); fetchPreferences(); }}>
                             <SettingsIcon />
                         </IconButton>
@@ -268,7 +267,7 @@ const Notifications = () => {
             <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
                 {isMobile ? (
                     <>
-                        <Tooltip title="Tümünü Okundu İşaretle">
+                        <Tooltip title={t('notifications.mark_all_read')}>
                             <span>
                                 <IconButton
                                     color="primary"
@@ -280,7 +279,7 @@ const Notifications = () => {
                                 </IconButton>
                             </span>
                         </Tooltip>
-                        <Tooltip title="Tümünü Sil">
+                        <Tooltip title={t('notifications.clear_all')}>
                             <span>
                                 <IconButton
                                     color="error"
@@ -301,7 +300,7 @@ const Notifications = () => {
                             onClick={handleMarkAllRead}
                             disabled={unreadCount === 0}
                         >
-                            Tümünü Okundu İşaretle
+                            {t('notifications.mark_all_read')}
                         </Button>
                         <Button
                             variant="outlined"
@@ -310,7 +309,7 @@ const Notifications = () => {
                             onClick={handleClearAll}
                             disabled={notifications.length === 0}
                         >
-                            Tümünü Sil
+                            {t('notifications.clear_all')}
                         </Button>
                     </>
                 )}
@@ -324,19 +323,19 @@ const Notifications = () => {
                     variant="scrollable"
                     scrollButtons="auto"
                 >
-                    <Tab label="Tümü" value="all" />
+                    <Tab label={t('notifications.all')} value="all" />
                     <Tab
-                        label={`Okunmamış (${unreadCount})`}
+                        label={`${t('notifications.unread')} (${unreadCount})`}
                         value="unread"
                         icon={<UnreadIcon />}
                         iconPosition="start"
                     />
-                    <Tab label="Akademik" value="academic" />
-                    <Tab label="Yoklama" value="attendance" />
-                    <Tab label="Yemek" value="meal" />
-                    <Tab label="Etkinlik" value="event" />
-                    <Tab label="Ödeme" value="payment" />
-                    <Tab label="Sistem" value="system" />
+                    <Tab label={t('notifications.category.academic')} value="academic" />
+                    <Tab label={t('notifications.category.attendance')} value="attendance" />
+                    <Tab label={t('notifications.category.meal')} value="meal" />
+                    <Tab label={t('notifications.category.event')} value="event" />
+                    <Tab label={t('notifications.category.payment')} value="payment" />
+                    <Tab label={t('notifications.category.system')} value="system" />
                 </Tabs>
             </Paper>
 
@@ -350,7 +349,7 @@ const Notifications = () => {
                     <Box sx={{ textAlign: 'center', py: 6 }}>
                         <NotificationsIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
                         <Typography variant="h6" color="text.secondary">
-                            Bildirim bulunamadı
+                            {t('notifications.no_notifications')}
                         </Typography>
                     </Box>
                 ) : (
@@ -392,7 +391,7 @@ const Notifications = () => {
                                                     {notification.title}
                                                 </Typography>
                                                 <Chip
-                                                    label={categoryNames[notification.category]}
+                                                    label={t(`notifications.category.${notification.category}`)}
                                                     size="small"
                                                     sx={{
                                                         backgroundColor: categoryColors[notification.category],
@@ -432,7 +431,7 @@ const Notifications = () => {
                                         }
                                     />
                                     <ListItemSecondaryAction sx={{ right: { xs: 8, sm: 16 } }}>
-                                        <Tooltip title="Sil">
+                                        <Tooltip title={t('common.delete')}>
                                             <IconButton
                                                 edge="end"
                                                 size={isMobile ? 'small' : 'medium'}
@@ -457,7 +456,7 @@ const Notifications = () => {
                                 disabled={pagination.page === 1}
                                 onClick={() => fetchNotifications(pagination.page - 1, activeTab)}
                             >
-                                Önceki
+                                {t('notifications.previous')}
                             </Button>
                             <Button disabled>
                                 {pagination.page} / {pagination.totalPages}
@@ -466,7 +465,7 @@ const Notifications = () => {
                                 disabled={pagination.page === pagination.totalPages}
                                 onClick={() => fetchNotifications(pagination.page + 1, activeTab)}
                             >
-                                Sonraki
+                                {t('notifications.next')}
                             </Button>
                         </ButtonGroup>
                     </Box>
@@ -484,7 +483,7 @@ const Notifications = () => {
                 <DialogTitle>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <SettingsIcon />
-                        Bildirim Tercihleri
+                        {t('notifications.preferences')}
                     </Box>
                 </DialogTitle>
                 <DialogContent>
@@ -497,10 +496,10 @@ const Notifications = () => {
                             {/* Email Preferences */}
                             <Grid item xs={12} sm={6}>
                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                                    E-posta Bildirimleri
+                                    {t('notifications.email')}
                                 </Typography>
                                 <FormGroup>
-                                    {Object.keys(categoryNames).map(category => (
+                                    {categoryKeys.map(category => (
                                         <FormControlLabel
                                             key={`email_${category}`}
                                             control={
@@ -510,7 +509,7 @@ const Notifications = () => {
                                                     color="primary"
                                                 />
                                             }
-                                            label={categoryNames[category]}
+                                            label={t(`notifications.category.${category}`)}
                                         />
                                     ))}
                                 </FormGroup>
@@ -519,10 +518,10 @@ const Notifications = () => {
                             {/* Push Preferences */}
                             <Grid item xs={12} sm={6}>
                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                                    Uygulama İçi Bildirimler
+                                    {t('notifications.push')}
                                 </Typography>
                                 <FormGroup>
-                                    {Object.keys(categoryNames).map(category => (
+                                    {categoryKeys.map(category => (
                                         <FormControlLabel
                                             key={`push_${category}`}
                                             control={
@@ -532,18 +531,18 @@ const Notifications = () => {
                                                     color="primary"
                                                 />
                                             }
-                                            label={categoryNames[category]}
+                                            label={t(`notifications.category.${category}`)}
                                         />
                                     ))}
                                 </FormGroup>
                             </Grid>
                         </Grid>
                     ) : (
-                        <Alert severity="error">Tercihler yüklenemedi</Alert>
+                        <Alert severity="error">{t('notifications.preferences_load_failed')}</Alert>
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setSettingsOpen(false)}>Kapat</Button>
+                    <Button onClick={() => setSettingsOpen(false)}>{t('common.close')}</Button>
                 </DialogActions>
             </Dialog>
         </Layout>

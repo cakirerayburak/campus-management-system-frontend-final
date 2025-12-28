@@ -12,6 +12,7 @@ import {
 } from '../../services/scheduleService';
 import { toast } from 'react-toastify';
 import Layout from '../../components/Layout';
+import { useTranslation } from 'react-i18next';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -20,15 +21,16 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import SchedulePreview from '../../components/SchedulePreview';
 
 const DraftSchedules = () => {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [drafts, setDrafts] = useState([]);
   const [totalDrafts, setTotalDrafts] = useState(0);
   const [error, setError] = useState(null);
-  
+
   // Filters
   const [semester, setSemester] = useState('');
   const [year, setYear] = useState('');
-  
+
   // Modals
   const [previewModal, setPreviewModal] = useState({ open: false, draft: null });
   const [confirmModal, setConfirmModal] = useState({ open: false, type: null, draft: null });
@@ -41,18 +43,18 @@ const DraftSchedules = () => {
       const params = {};
       if (semester) params.semester = semester;
       if (year) params.year = year;
-      
+
       const res = await getDraftSchedules(params);
-      
+
       if (res.data.success) {
         setDrafts(res.data.data || []);
         setTotalDrafts(res.data.totalDrafts || 0);
       } else {
-        setError(res.data.message || 'Taslaklar yüklenemedi');
+        setError(res.data.message || t('draft_schedules.load_error'));
       }
     } catch (err) {
       console.error('Taslak listeleme hatası:', err);
-      setError(err.response?.data?.message || 'Taslaklar yüklenirken bir hata oluştu');
+      setError(err.response?.data?.message || t('draft_schedules.load_error'));
     } finally {
       setLoading(false);
     }
@@ -80,28 +82,28 @@ const DraftSchedules = () => {
 
     try {
       setActionLoading(true);
-      
+
       if (type === 'approve') {
         const res = await approveDraftSchedule(draft.batchId, { archiveExisting: true });
         if (res.data.success) {
-          toast.success(res.data.message || 'Program başarıyla onaylandı!');
+          toast.success(res.data.message || t('draft_schedules.success_approve'));
         } else {
-          toast.error(res.data.message || 'Onaylama başarısız');
+          toast.error(res.data.message || t('draft_schedules.error_approve'));
         }
       } else if (type === 'reject') {
         const res = await rejectDraftSchedule(draft.batchId);
         if (res.data.success) {
-          toast.success(res.data.message || 'Taslak reddedildi ve silindi');
+          toast.success(res.data.message || t('draft_schedules.success_reject'));
         } else {
-          toast.error(res.data.message || 'Reddetme başarısız');
+          toast.error(res.data.message || t('draft_schedules.error_reject'));
         }
       }
-      
+
       setConfirmModal({ open: false, type: null, draft: null });
       fetchDrafts();
     } catch (err) {
       console.error(`${type} hatası:`, err);
-      toast.error(err.response?.data?.message || `İşlem başarısız: ${type}`);
+      toast.error(err.response?.data?.message || t('draft_schedules.error_approve'));
     } finally {
       setActionLoading(false);
     }
@@ -109,7 +111,7 @@ const DraftSchedules = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleString('tr-TR', {
+    return new Date(dateString).toLocaleString(i18n.language, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -129,7 +131,7 @@ const DraftSchedules = () => {
           <Box display="flex" alignItems="center" gap={2}>
             <DraftsIcon sx={{ fontSize: 40, color: 'primary.main' }} />
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Taslak Programlar
+              {t('draft_schedules.title')}
             </Typography>
           </Box>
           <Button
@@ -138,14 +140,13 @@ const DraftSchedules = () => {
             onClick={fetchDrafts}
             disabled={loading}
           >
-            Yenile
+            {t('draft_schedules.refresh')}
           </Button>
         </Box>
 
         <Alert severity="info" sx={{ mb: 3 }}>
           <Typography variant="body2">
-            Otomatik oluşturulan ders programları önce <strong>taslak</strong> olarak kaydedilir.
-            Bu sayfadan taslakları inceleyebilir, onaylayabilir veya reddedebilirsiniz.
+            {t('draft_schedules.info_message')}
           </Typography>
         </Alert>
 
@@ -154,28 +155,28 @@ const DraftSchedules = () => {
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
               <FormControl fullWidth size="small">
-                <InputLabel>Dönem</InputLabel>
+                <InputLabel>{t('draft_schedules.semester')}</InputLabel>
                 <Select
                   value={semester}
-                  label="Dönem"
+                  label={t('draft_schedules.semester')}
                   onChange={(e) => setSemester(e.target.value)}
                 >
-                  <MenuItem value="">Tümü</MenuItem>
-                  <MenuItem value="Fall">Güz</MenuItem>
-                  <MenuItem value="Spring">Bahar</MenuItem>
-                  <MenuItem value="Summer">Yaz</MenuItem>
+                  <MenuItem value="">{t('draft_schedules.all')}</MenuItem>
+                  <MenuItem value="Fall">{t('draft_schedules.fall')}</MenuItem>
+                  <MenuItem value="Spring">{t('draft_schedules.spring')}</MenuItem>
+                  <MenuItem value="Summer">{t('draft_schedules.summer')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={4}>
               <FormControl fullWidth size="small">
-                <InputLabel>Yıl</InputLabel>
+                <InputLabel>{t('draft_schedules.year')}</InputLabel>
                 <Select
                   value={year}
-                  label="Yıl"
+                  label={t('draft_schedules.year')}
                   onChange={(e) => setYear(e.target.value)}
                 >
-                  <MenuItem value="">Tümü</MenuItem>
+                  <MenuItem value="">{t('draft_schedules.all')}</MenuItem>
                   {[2024, 2025, 2026].map((y) => (
                     <MenuItem key={y} value={y}>{y}</MenuItem>
                   ))}
@@ -184,7 +185,7 @@ const DraftSchedules = () => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <Chip
-                label={`Toplam: ${totalDrafts} taslak`}
+                label={t('draft_schedules.total_drafts', { count: totalDrafts })}
                 color="primary"
                 variant="outlined"
               />
@@ -208,10 +209,10 @@ const DraftSchedules = () => {
           <Paper sx={{ p: 4, textAlign: 'center' }}>
             <DraftsIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
             <Typography variant="h6" color="text.secondary">
-              Onay bekleyen taslak program bulunamadı
+              {t('draft_schedules.no_drafts')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Yeni program oluşturmak için "Ders Programı Oluştur" sayfasını kullanın.
+              {t('draft_schedules.no_drafts_hint')}
             </Typography>
           </Paper>
         ) : (
@@ -219,11 +220,11 @@ const DraftSchedules = () => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primary.main' }}>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Batch ID</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Oluşturulma Tarihi</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Ders Sayısı</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Durum</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }} align="center">İşlemler</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>{t('draft_schedules.batch_id')}</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>{t('draft_schedules.created_at')}</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>{t('draft_schedules.course_count')}</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>{t('draft_schedules.status')}</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 600 }} align="center">{t('draft_schedules.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -238,7 +239,7 @@ const DraftSchedules = () => {
                     <TableCell>
                       <Chip
                         size="small"
-                        label={`${getScheduleCount(draft)} ders`}
+                        label={`${getScheduleCount(draft)} ${t('common.course', { count: getScheduleCount(draft) })}`}
                         color="info"
                         variant="outlined"
                       />
@@ -246,14 +247,14 @@ const DraftSchedules = () => {
                     <TableCell>
                       <Chip
                         size="small"
-                        label="Taslak"
+                        label={t('draft_schedules.status_draft')}
                         color="warning"
                         icon={<DraftsIcon />}
                       />
                     </TableCell>
                     <TableCell align="center">
                       <Box display="flex" justifyContent="center" gap={1}>
-                        <Tooltip title="Önizle">
+                        <Tooltip title={t('draft_schedules.preview')}>
                           <IconButton
                             size="small"
                             color="info"
@@ -262,7 +263,7 @@ const DraftSchedules = () => {
                             <VisibilityIcon />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Onayla">
+                        <Tooltip title={t('draft_schedules.approve')}>
                           <IconButton
                             size="small"
                             color="success"
@@ -271,7 +272,7 @@ const DraftSchedules = () => {
                             <CheckCircleIcon />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Reddet">
+                        <Tooltip title={t('draft_schedules.reject')}>
                           <IconButton
                             size="small"
                             color="error"
@@ -299,7 +300,7 @@ const DraftSchedules = () => {
           <DialogTitle>
             <Box display="flex" alignItems="center" gap={1}>
               <VisibilityIcon color="primary" />
-              Program Önizleme
+              {t('draft_schedules.preview_title')}
             </Box>
           </DialogTitle>
           <DialogContent dividers>
@@ -313,7 +314,7 @@ const DraftSchedules = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setPreviewModal({ open: false, draft: null })}>
-              Kapat
+              {t('draft_schedules.close')}
             </Button>
             <Button
               variant="contained"
@@ -324,7 +325,7 @@ const DraftSchedules = () => {
                 handleApprove(previewModal.draft);
               }}
             >
-              Onayla
+              {t('draft_schedules.approve')}
             </Button>
             <Button
               variant="outlined"
@@ -335,7 +336,7 @@ const DraftSchedules = () => {
                 handleReject(previewModal.draft);
               }}
             >
-              Reddet
+              {t('draft_schedules.reject')}
             </Button>
           </DialogActions>
         </Dialog>
@@ -346,13 +347,13 @@ const DraftSchedules = () => {
           onClose={() => setConfirmModal({ open: false, type: null, draft: null })}
         >
           <DialogTitle>
-            {confirmModal.type === 'approve' ? 'Programı Onayla' : 'Programı Reddet'}
+            {confirmModal.type === 'approve' ? t('draft_schedules.confirm_approve_title') : t('draft_schedules.confirm_reject_title')}
           </DialogTitle>
           <DialogContent>
             <Typography>
               {confirmModal.type === 'approve'
-                ? 'Bu taslak programı onaylamak istediğinize emin misiniz? Onaylandığında mevcut aktif programlar arşivlenecektir.'
-                : 'Bu taslak programı reddetmek istediğinize emin misiniz? Bu işlem geri alınamaz ve taslak silinecektir.'}
+                ? t('draft_schedules.confirm_approve_msg')
+                : t('draft_schedules.confirm_reject_msg')}
             </Typography>
           </DialogContent>
           <DialogActions>
@@ -360,7 +361,7 @@ const DraftSchedules = () => {
               onClick={() => setConfirmModal({ open: false, type: null, draft: null })}
               disabled={actionLoading}
             >
-              İptal
+              {t('draft_schedules.cancel')}
             </Button>
             <Button
               variant="contained"
@@ -369,7 +370,7 @@ const DraftSchedules = () => {
               disabled={actionLoading}
               startIcon={actionLoading ? <CircularProgress size={16} /> : null}
             >
-              {confirmModal.type === 'approve' ? 'Onayla' : 'Reddet'}
+              {confirmModal.type === 'approve' ? t('draft_schedules.approve') : t('draft_schedules.reject')}
             </Button>
           </DialogActions>
         </Dialog>

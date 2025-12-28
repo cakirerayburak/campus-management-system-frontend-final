@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Typography, Paper, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Chip, Grid, Card, CardContent
@@ -21,6 +22,8 @@ const dayTranslations = {
 const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const SchedulePreview = ({ schedules = [], stats, batchId }) => {
+  const { t } = useTranslation();
+
   // Group schedules by day
   const groupedByDay = schedules.reduce((acc, schedule) => {
     const day = schedule.day_of_week || schedule.dayOfWeek || 'Unknown';
@@ -45,24 +48,24 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
   };
 
   const getCourseName = (schedule) => {
-    return schedule.section?.course?.name || 
-           schedule.courseName || 
-           schedule.course_name || 
-           'Ders Adı Yok';
+    return schedule.section?.course?.name ||
+      schedule.courseName ||
+      schedule.course_name ||
+      t('common.no_name');
   };
 
   const getCourseCode = (schedule) => {
-    return schedule.section?.course?.code || 
-           schedule.courseCode || 
-           schedule.course_code || 
-           '';
+    return schedule.section?.course?.code ||
+      schedule.courseCode ||
+      schedule.course_code ||
+      '';
   };
 
   const getClassroom = (schedule) => {
-    return schedule.classroom?.name || 
-           schedule.classroomName || 
-           schedule.classroom_name || 
-           'Belirsiz';
+    return schedule.classroom?.name ||
+      schedule.classroomName ||
+      schedule.classroom_name ||
+      t('common.unknown');
   };
 
   const getInstructor = (schedule) => {
@@ -74,10 +77,10 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
   };
 
   const getSectionCode = (schedule) => {
-    return schedule.section?.section_code || 
-           schedule.sectionCode || 
-           schedule.section_code || 
-           '';
+    return schedule.section?.section_code ||
+      schedule.sectionCode ||
+      schedule.section_code ||
+      '';
   };
 
   return (
@@ -92,7 +95,7 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
                   {stats.totalSections || stats.totalCourses || schedules.length}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Toplam Ders
+                  {t('department_schedules.stats.total_courses')}
                 </Typography>
               </CardContent>
             </Card>
@@ -104,7 +107,7 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
                   {stats.scheduledSections || stats.totalCourses || schedules.length}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Programlanan
+                  {t('department_schedules.stats.scheduled')}
                 </Typography>
               </CardContent>
             </Card>
@@ -116,7 +119,7 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
                   {stats.totalClassrooms || '-'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Derslik
+                  {t('department_schedules.stats.classrooms')}
                 </Typography>
               </CardContent>
             </Card>
@@ -128,7 +131,7 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
                   {stats.departmentCount || '-'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Bölüm
+                  {t('department_schedules.stats.departments')}
                 </Typography>
               </CardContent>
             </Card>
@@ -152,7 +155,7 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
       {schedules.length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography color="text.secondary">
-            Bu taslakta henüz ders programı verisi bulunmuyor.
+            {t('department_schedules.preview.no_data')}
           </Typography>
         </Paper>
       ) : (
@@ -163,26 +166,26 @@ const SchedulePreview = ({ schedules = [], stats, batchId }) => {
 
           return (
             <Paper key={day} sx={{ mb: 3 }}>
-              <Box sx={{ 
-                p: 2, 
-                backgroundColor: 'primary.main', 
+              <Box sx={{
+                p: 2,
+                backgroundColor: 'primary.main',
                 color: 'white',
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16
               }}>
                 <Typography variant="h6">
-                  {dayTranslations[day] || day}
+                  {t(`department_schedules.days.${day}`) || day}
                 </Typography>
               </Box>
               <TableContainer>
                 <Table size="small">
                   <TableHead>
                     <TableRow sx={{ backgroundColor: 'grey.100' }}>
-                      <TableCell><AccessTimeIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />Saat</TableCell>
-                      <TableCell><SchoolIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />Ders</TableCell>
-                      <TableCell>Şube</TableCell>
-                      <TableCell><RoomIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />Derslik</TableCell>
-                      <TableCell><PersonIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />Öğretim Üyesi</TableCell>
+                      <TableCell><AccessTimeIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />{t('common.time')}</TableCell>
+                      <TableCell><SchoolIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />{t('common.course')}</TableCell>
+                      <TableCell>{t('department_schedules.preview.section')}</TableCell>
+                      <TableCell><RoomIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />{t('common.classroom')}</TableCell>
+                      <TableCell><PersonIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />{t('common.instructor')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
