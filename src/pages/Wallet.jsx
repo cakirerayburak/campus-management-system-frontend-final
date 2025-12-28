@@ -172,7 +172,7 @@ const Wallet = () => {
 
           {/* İşlem Geçmişi */}
           <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 3 }}>
+            <Paper sx={{ p: { xs: 2, sm: 3 } }}>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <HistoryIcon color="primary" />
                 <Typography variant="h6">İşlem Geçmişi</Typography>
@@ -186,52 +186,57 @@ const Wallet = () => {
                 </Box>
               ) : (
                 <>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Tarih</TableCell>
-                        <TableCell>Açıklama</TableCell>
-                        <TableCell align="right">Tutar</TableCell>
-                        <TableCell>Bakiye Sonrası</TableCell>
-                        <TableCell>Durum</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {transactions.map((t) => (
-                        <TableRow key={t.id} hover>
-                          <TableCell>
-                            {new Date(t.createdAt).toLocaleString('tr-TR', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </TableCell>
-                          <TableCell>{t.description || '-'}</TableCell>
-                          <TableCell align="right">
-                            <Typography
-                              variant="body2"
-                              color={t.type === 'deposit' || t.type === 'refund' ? 'success.main' : 'error.main'}
-                              fontWeight="bold"
-                            >
-                              {t.type === 'deposit' || t.type === 'refund' ? '+' : '-'}{parseFloat(t.amount).toFixed(2)} ₺
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="right">
-                            {t.balance_after ? `${parseFloat(t.balance_after).toFixed(2)} ₺` : '-'}
-                          </TableCell>
-                          <TableCell>
-                            <Chip
-                              label={getTransactionTypeLabel(t.type)}
-                              color={getTransactionTypeColor(t.type)}
-                              size="small"
-                            />
-                          </TableCell>
+                  <Box sx={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                    <Table sx={{ minWidth: 600 }}>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Tarih</TableCell>
+                          <TableCell>Açıklama</TableCell>
+                          <TableCell align="right">Tutar</TableCell>
+                          <TableCell>Bakiye Sonrası</TableCell>
+                          <TableCell>Durum</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHead>
+                      <TableBody>
+                        {transactions.map((t) => (
+                          <TableRow key={t.id} hover>
+                            <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                              {new Date(t.createdAt).toLocaleString('tr-TR', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </TableCell>
+                            <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {t.description || '-'}
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography
+                                variant="body2"
+                                color={t.type === 'deposit' || t.type === 'refund' ? 'success.main' : 'error.main'}
+                                fontWeight="bold"
+                                sx={{ whiteSpace: 'nowrap' }}
+                              >
+                                {t.type === 'deposit' || t.type === 'refund' ? '+' : '-'}{parseFloat(t.amount).toFixed(2)} ₺
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+                              {t.balance_after ? `${parseFloat(t.balance_after).toFixed(2)} ₺` : '-'}
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                label={getTransactionTypeLabel(t.type)}
+                                color={getTransactionTypeColor(t.type)}
+                                size="small"
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Box>
 
                   {totalPages > 1 && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
@@ -240,6 +245,7 @@ const Wallet = () => {
                         page={page}
                         onChange={(e, value) => setPage(value)}
                         color="primary"
+                        size="small"
                       />
                     </Box>
                   )}

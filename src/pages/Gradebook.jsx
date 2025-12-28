@@ -115,84 +115,86 @@ const Gradebook = () => {
             students.length === 0 ? (
               <Alert severity="info">Bu derse kayıtlı öğrenci bulunamadı. Öğrenciler ders seçtikten sonra burada görünecektir.</Alert>
             ) : (
-              <Paper sx={{ p: 3 }}>
+              <Paper sx={{ p: { xs: 2, sm: 3 } }}>
                 <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                   Kayıtlı Öğrenciler ({students.length})
                 </Typography>
-                <Table>
-                  <TableHead sx={{ bgcolor: '#f5f5f5' }}>
-                    <TableRow>
-                      <TableCell><strong>Öğrenci No</strong></TableCell>
-                      <TableCell><strong>Ad Soyad</strong></TableCell>
-                      <TableCell><strong>E-posta</strong></TableCell>
-                      <TableCell><strong>Vize (%40)</strong></TableCell>
-                      <TableCell><strong>Final (%60)</strong></TableCell>
-                      <TableCell><strong>Harf Notu</strong></TableCell>
-                      <TableCell><strong>Durum</strong></TableCell>
-                      <TableCell><strong>İşlem</strong></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {students.map((enrollment) => (
-                      <TableRow key={enrollment.id} hover>
-                        <TableCell>{enrollment.student?.student_number || '-'}</TableCell>
-                        <TableCell>{enrollment.student?.user?.name || '-'}</TableCell>
-                        <TableCell>{enrollment.student?.user?.email || '-'}</TableCell>
-                        <TableCell>
-                          <TextField
-                            type="number"
-                            size="small"
-                            variant="outlined"
-                            value={enrollment.midterm_grade || ''}
-                            onChange={(e) => handleGradeChange(enrollment.id, 'midterm_grade', e.target.value)}
-                            sx={{ width: 80 }}
-                            inputProps={{ min: 0, max: 100, step: 0.01 }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <TextField
-                            type="number"
-                            size="small"
-                            variant="outlined"
-                            value={enrollment.final_grade || ''}
-                            onChange={(e) => handleGradeChange(enrollment.id, 'final_grade', e.target.value)}
-                            sx={{ width: 80 }}
-                            inputProps={{ min: 0, max: 100, step: 0.01 }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          {enrollment.letter_grade ? (
-                            <Chip
-                              label={enrollment.letter_grade}
-                              size="small"
-                              color={enrollment.status === 'failed' ? 'error' : 'success'}
-                            />
-                          ) : (
-                            <Typography variant="body2" color="text.secondary">-</Typography>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            label={enrollment.status === 'enrolled' ? 'Devam Ediyor' : enrollment.status}
-                            size="small"
-                            color={enrollment.status === 'enrolled' ? 'primary' : 'default'}
-                            variant="outlined"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => handleSave(enrollment.id)}
-                            disabled={!enrollment.midterm_grade && !enrollment.final_grade}
-                          >
-                            Kaydet
-                          </Button>
-                        </TableCell>
+                <Box sx={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                  <Table sx={{ minWidth: 800 }}>
+                    <TableHead sx={{ bgcolor: '#f5f5f5' }}>
+                      <TableRow>
+                        <TableCell><strong>Öğrenci No</strong></TableCell>
+                        <TableCell><strong>Ad Soyad</strong></TableCell>
+                        <TableCell><strong>E-posta</strong></TableCell>
+                        <TableCell><strong>Vize (%40)</strong></TableCell>
+                        <TableCell><strong>Final (%60)</strong></TableCell>
+                        <TableCell><strong>Harf Notu</strong></TableCell>
+                        <TableCell><strong>Durum</strong></TableCell>
+                        <TableCell><strong>İşlem</strong></TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHead>
+                    <TableBody>
+                      {students.map((enrollment) => (
+                        <TableRow key={enrollment.id} hover>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{enrollment.student?.student_number || '-'}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{enrollment.student?.user?.name || '-'}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{enrollment.student?.user?.email || '-'}</TableCell>
+                          <TableCell>
+                            <TextField
+                              type="number"
+                              size="small"
+                              variant="outlined"
+                              value={enrollment.midterm_grade || ''}
+                              onChange={(e) => handleGradeChange(enrollment.id, 'midterm_grade', e.target.value)}
+                              sx={{ width: 80 }}
+                              inputProps={{ min: 0, max: 100, step: 0.01 }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <TextField
+                              type="number"
+                              size="small"
+                              variant="outlined"
+                              value={enrollment.final_grade || ''}
+                              onChange={(e) => handleGradeChange(enrollment.id, 'final_grade', e.target.value)}
+                              sx={{ width: 80 }}
+                              inputProps={{ min: 0, max: 100, step: 0.01 }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {enrollment.letter_grade ? (
+                              <Chip
+                                label={enrollment.letter_grade}
+                                size="small"
+                                color={enrollment.status === 'failed' ? 'error' : 'success'}
+                              />
+                            ) : (
+                              <Typography variant="body2" color="text.secondary">-</Typography>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={enrollment.status === 'enrolled' ? 'Devam Ediyor' : enrollment.status}
+                              size="small"
+                              color={enrollment.status === 'enrolled' ? 'primary' : 'default'}
+                              variant="outlined"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              onClick={() => handleSave(enrollment.id)}
+                              disabled={!enrollment.midterm_grade && !enrollment.final_grade}
+                            >
+                              Kaydet
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Box>
               </Paper>
             )
           ) : (

@@ -135,9 +135,16 @@ const AdminDashboard = () => {
     return (
         <Layout>
             {/* Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                gap: 2,
+                mb: 4
+            }}>
                 <Box>
-                    <Typography variant="h4" fontWeight={700}>
+                    <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                         Admin Dashboard
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

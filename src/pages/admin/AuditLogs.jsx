@@ -26,7 +26,9 @@ import {
     Button,
     Tooltip,
     Card,
-    CardContent
+    CardContent,
+    useMediaQuery,
+    useTheme
 } from '@mui/material';
 import {
     Search as SearchIcon,
@@ -92,6 +94,8 @@ const AuditLogs = () => {
     const [selectedLog, setSelectedLog] = useState(null);
     const [detailOpen, setDetailOpen] = useState(false);
     const [stats, setStats] = useState(null);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const fetchLogs = async () => {
         setLoading(true);
@@ -161,9 +165,16 @@ const AuditLogs = () => {
     return (
         <Layout>
             {/* Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                gap: 2,
+                mb: 3
+            }}>
                 <Box>
-                    <Typography variant="h4" fontWeight={700}>
+                    <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                         İşlem Logları
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -272,21 +283,21 @@ const AuditLogs = () => {
             </Paper>
 
             {/* Table */}
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
                 {loading ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                         <CircularProgress />
                     </Box>
                 ) : (
                     <>
-                        <Table>
+                        <Table sx={{ minWidth: 800 }}>
                             <TableHead>
                                 <TableRow sx={{ bgcolor: 'action.hover' }}>
-                                    <TableCell sx={{ fontWeight: 600 }}>Tarih</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Kullanıcı</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>Tarih</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>Kullanıcı</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Aksiyon</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Entity</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>IP Adresi</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>IP Adresi</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Açıklama</TableCell>
                                     <TableCell align="center" sx={{ fontWeight: 600 }}>Detay</TableCell>
                                 </TableRow>
@@ -294,12 +305,12 @@ const AuditLogs = () => {
                             <TableBody>
                                 {logs.map((log) => (
                                     <TableRow key={log.id} hover>
-                                        <TableCell>
+                                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
                                             <Typography variant="body2">
                                                 {formatDate(log.createdAt || log.created_at)}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
                                             {log.user ? (
                                                 <Box>
                                                     <Typography variant="body2" fontWeight={500}>
@@ -327,7 +338,7 @@ const AuditLogs = () => {
                                                 {log.entity_type || '-'}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
                                             <Typography variant="body2" fontFamily="monospace">
                                                 {log.ip_address || '-'}
                                             </Typography>
@@ -371,7 +382,7 @@ const AuditLogs = () => {
                             onPageChange={(e, newPage) => setPagination(prev => ({ ...prev, page: newPage }))}
                             rowsPerPage={pagination.limit}
                             onRowsPerPageChange={(e) => setPagination(prev => ({ ...prev, limit: parseInt(e.target.value), page: 0 }))}
-                            labelRowsPerPage="Sayfa başına:"
+                            labelRowsPerPage={isMobile ? '' : 'Sayfa başına:'}
                             rowsPerPageOptions={[10, 25, 50, 100]}
                         />
                     </>
@@ -379,7 +390,7 @@ const AuditLogs = () => {
             </TableContainer>
 
             {/* Detail Dialog */}
-            <Dialog open={detailOpen} onClose={() => setDetailOpen(false)} maxWidth="md" fullWidth>
+            <Dialog open={detailOpen} onClose={() => setDetailOpen(false)} maxWidth="md" fullWidth fullScreen={isMobile}>
                 <DialogTitle>
                     Log Detayı
                 </DialogTitle>

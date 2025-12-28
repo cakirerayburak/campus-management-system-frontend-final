@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Typography, Paper, Grid, Box, Chip, Button, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem,
-  CircularProgress, Alert, Card, CardContent, CardActions
+  CircularProgress, Alert, Card, CardContent, CardActions, useMediaQuery, useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,6 +16,8 @@ const Announcements = () => {
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Modal State
   const [open, setOpen] = useState(false);
@@ -67,8 +69,15 @@ const Announcements = () => {
 
   return (
     <Layout>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'flex-start', sm: 'center' },
+        gap: 2,
+        mb: 4
+      }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
           Duyurular
         </Typography>
         {user?.role === 'admin' && (
@@ -77,6 +86,7 @@ const Announcements = () => {
             startIcon={<AddIcon />}
             onClick={() => setOpen(true)}
             disableElevation
+            size={isMobile ? 'small' : 'medium'}
           >
             Yeni Duyuru
           </Button>
@@ -136,7 +146,7 @@ const Announcements = () => {
       )}
 
       {/* Duyuru Ekleme Modalı (Sadece Admin) */}
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" fullScreen={isMobile}>
         <DialogTitle>Yeni Duyuru Yayınla</DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>

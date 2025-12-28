@@ -148,8 +148,15 @@ const AttendanceReport = () => {
   return (
     <Layout>
       {/* BAŞLIK VE EXCEL BUTONU */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'flex-start', sm: 'center' },
+        gap: 2,
+        mb: 4
+      }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
           Yoklama Raporları
         </Typography>
 
@@ -159,6 +166,7 @@ const AttendanceReport = () => {
           startIcon={<FileDownloadIcon />}
           onClick={handleExportToExcel}
           disabled={loading || !selectedSection || sessions.length === 0}
+          size="small"
         >
           Excel'e Aktar
         </Button>
@@ -209,64 +217,66 @@ const AttendanceReport = () => {
               </Box>
             </AccordionSummary>
             <AccordionDetails sx={{ p: 0 }}>
-              <Table size="small">
-                <TableHead sx={{ bgcolor: '#f5f5f5' }}>
-                  <TableRow>
-                    <TableCell>Öğrenci No</TableCell>
-                    <TableCell>Ad Soyad</TableCell>
-                    <TableCell>Giriş Saati</TableCell>
-                    <TableCell>Mesafe</TableCell>
-                    <TableCell>Durum & İşlem</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {session.records.length === 0 ? (
-                    <TableRow><TableCell colSpan={5} align="center">Katılım yok.</TableCell></TableRow>
-                  ) : (
-                    session.records.map((record) => (
-                      <TableRow key={record.id}>
-                        <TableCell>{record.student?.student_number}</TableCell>
-                        <TableCell>{record.student?.user?.name}</TableCell>
-                        <TableCell>
-                          {new Date(record.check_in_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
-                        </TableCell>
-                        <TableCell>{Math.round(record.distance_from_center)}m</TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            {record.is_flagged ? (
-                              <>
-                                <Tooltip title={record.flag_reason || "Şüpheli İşlem"} arrow placement="top">
-                                  <Chip
-                                    icon={<InfoIcon />}
-                                    label="Şüpheli"
-                                    color="warning"
-                                    size="small"
-                                    sx={{ cursor: 'help' }}
-                                  />
-                                </Tooltip>
+              <Box sx={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                <Table size="small" sx={{ minWidth: 500 }}>
+                  <TableHead sx={{ bgcolor: '#f5f5f5' }}>
+                    <TableRow>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Öğrenci No</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Ad Soyad</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Giriş Saati</TableCell>
+                      <TableCell>Mesafe</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Durum & İşlem</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {session.records.length === 0 ? (
+                      <TableRow><TableCell colSpan={5} align="center">Katılım yok.</TableCell></TableRow>
+                    ) : (
+                      session.records.map((record) => (
+                        <TableRow key={record.id}>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{record.student?.student_number}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{record.student?.user?.name}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                            {new Date(record.check_in_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                          </TableCell>
+                          <TableCell>{Math.round(record.distance_from_center)}m</TableCell>
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              {record.is_flagged ? (
+                                <>
+                                  <Tooltip title={record.flag_reason || "Şüpheli İşlem"} arrow placement="top">
+                                    <Chip
+                                      icon={<InfoIcon />}
+                                      label="Şüpheli"
+                                      color="warning"
+                                      size="small"
+                                      sx={{ cursor: 'help' }}
+                                    />
+                                  </Tooltip>
 
-                                <Tooltip title="Onayla">
-                                  <IconButton size="small" color="success" onClick={() => handleApprove(record.id)}>
-                                    <CheckCircleIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
+                                  <Tooltip title="Onayla">
+                                    <IconButton size="small" color="success" onClick={() => handleApprove(record.id)}>
+                                      <CheckCircleIcon fontSize="small" />
+                                    </IconButton>
+                                  </Tooltip>
 
-                                <Tooltip title="Reddet">
-                                  <IconButton size="small" color="error" onClick={() => handleReject(record.id)}>
-                                    <DeleteIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-                              </>
-                            ) : (
-                              <Chip label="Var" color="success" size="small" />
-                            )}
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                                  <Tooltip title="Reddet">
+                                    <IconButton size="small" color="error" onClick={() => handleReject(record.id)}>
+                                      <DeleteIcon fontSize="small" />
+                                    </IconButton>
+                                  </Tooltip>
+                                </>
+                              ) : (
+                                <Chip label="Var" color="success" size="small" />
+                              )}
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </Box>
             </AccordionDetails>
           </Accordion>
         ))

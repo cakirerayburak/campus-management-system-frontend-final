@@ -200,10 +200,12 @@ const NotificationBell = () => {
                 onClose={handleClose}
                 PaperProps={{
                     sx: {
-                        width: 360,
-                        maxHeight: 480,
+                        width: { xs: 'calc(100vw - 32px)', sm: 360 },
+                        maxWidth: 360,
+                        maxHeight: { xs: '70vh', sm: 480 },
                         borderRadius: 2,
-                        boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+                        mx: { xs: 2, sm: 0 }
                     }
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}

@@ -25,7 +25,9 @@ import {
     FormControlLabel,
     FormGroup,
     Grid,
-    Tooltip
+    Tooltip,
+    useMediaQuery,
+    useTheme
 } from '@mui/material';
 import {
     Notifications as NotificationsIcon,
@@ -90,6 +92,8 @@ const Notifications = () => {
     const [preferences, setPreferences] = useState(null);
     const [preferencesLoading, setPreferencesLoading] = useState(false);
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Bildirimleri yükle
     const fetchNotifications = async (page = 1, category = null) => {
@@ -230,15 +234,22 @@ const Notifications = () => {
     return (
         <Layout>
             {/* Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <NotificationsIcon sx={{ fontSize: 32, color: 'primary.main' }} />
-                    <Typography variant="h4" fontWeight={700}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                gap: 2,
+                mb: 3
+            }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                    <NotificationsIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: 'primary.main' }} />
+                    <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                         Bildirimler
                     </Typography>
                     {unreadCount > 0 && (
                         <Chip
-                            label={`${unreadCount} okunmamış`}
+                            label={isMobile ? unreadCount : `${unreadCount} okunmamış`}
                             color="error"
                             size="small"
                         />
@@ -254,24 +265,55 @@ const Notifications = () => {
             </Box>
 
             {/* Actions */}
-            <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-                <Button
-                    variant="outlined"
-                    startIcon={<ReadAllIcon />}
-                    onClick={handleMarkAllRead}
-                    disabled={unreadCount === 0}
-                >
-                    Tümünü Okundu İşaretle
-                </Button>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    startIcon={<ClearAllIcon />}
-                    onClick={handleClearAll}
-                    disabled={notifications.length === 0}
-                >
-                    Tümünü Sil
-                </Button>
+            <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
+                {isMobile ? (
+                    <>
+                        <Tooltip title="Tümünü Okundu İşaretle">
+                            <span>
+                                <IconButton
+                                    color="primary"
+                                    onClick={handleMarkAllRead}
+                                    disabled={unreadCount === 0}
+                                    sx={{ border: '1px solid', borderColor: 'divider' }}
+                                >
+                                    <ReadAllIcon />
+                                </IconButton>
+                            </span>
+                        </Tooltip>
+                        <Tooltip title="Tümünü Sil">
+                            <span>
+                                <IconButton
+                                    color="error"
+                                    onClick={handleClearAll}
+                                    disabled={notifications.length === 0}
+                                    sx={{ border: '1px solid', borderColor: 'divider' }}
+                                >
+                                    <ClearAllIcon />
+                                </IconButton>
+                            </span>
+                        </Tooltip>
+                    </>
+                ) : (
+                    <>
+                        <Button
+                            variant="outlined"
+                            startIcon={<ReadAllIcon />}
+                            onClick={handleMarkAllRead}
+                            disabled={unreadCount === 0}
+                        >
+                            Tümünü Okundu İşaretle
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            startIcon={<ClearAllIcon />}
+                            onClick={handleClearAll}
+                            disabled={notifications.length === 0}
+                        >
+                            Tümünü Sil
+                        </Button>
+                    </>
+                )}
             </Box>
 
             {/* Tabs */}
@@ -319,8 +361,9 @@ const Notifications = () => {
                                     button
                                     onClick={() => handleNotificationClick(notification)}
                                     sx={{
-                                        py: 2,
-                                        px: 3,
+                                        py: { xs: 1.5, sm: 2 },
+                                        px: { xs: 1.5, sm: 3 },
+                                        pr: { xs: 6, sm: 8 },
                                         backgroundColor: notification.is_read ? 'transparent' : 'rgba(79, 70, 229, 0.04)',
                                         borderLeft: `4px solid ${categoryColors[notification.category] || '#6b7280'}`,
                                         '&:hover': {
@@ -328,13 +371,24 @@ const Notifications = () => {
                                         }
                                     }}
                                 >
-                                    <ListItemIcon>
+                                    <ListItemIcon sx={{ minWidth: { xs: 36, sm: 48 } }}>
                                         {categoryIcons[notification.category]}
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Typography fontWeight={notification.is_read ? 400 : 600}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: { xs: 'column', sm: 'row' },
+                                                alignItems: { xs: 'flex-start', sm: 'center' },
+                                                gap: { xs: 0.5, sm: 1 }
+                                            }}>
+                                                <Typography
+                                                    fontWeight={notification.is_read ? 400 : 600}
+                                                    sx={{
+                                                        fontSize: { xs: '0.9rem', sm: '1rem' },
+                                                        wordBreak: 'break-word'
+                                                    }}
+                                                >
                                                     {notification.title}
                                                 </Typography>
                                                 <Chip
@@ -343,30 +397,48 @@ const Notifications = () => {
                                                     sx={{
                                                         backgroundColor: categoryColors[notification.category],
                                                         color: 'white',
-                                                        fontSize: '0.7rem',
-                                                        height: 20
+                                                        fontSize: '0.65rem',
+                                                        height: 18,
+                                                        flexShrink: 0
                                                     }}
                                                 />
                                             </Box>
                                         }
                                         secondary={
                                             <Box>
-                                                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                    sx={{
+                                                        mt: 0.5,
+                                                        fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                                        wordBreak: 'break-word'
+                                                    }}
+                                                >
                                                     {notification.message}
                                                 </Typography>
-                                                <Typography variant="caption" color="text.disabled" sx={{ mt: 1, display: 'block' }}>
+                                                <Typography
+                                                    variant="caption"
+                                                    color="text.disabled"
+                                                    sx={{
+                                                        mt: 0.5,
+                                                        display: 'block',
+                                                        fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                                                    }}
+                                                >
                                                     {formatDate(notification.createdAt)}
                                                 </Typography>
                                             </Box>
                                         }
                                     />
-                                    <ListItemSecondaryAction>
+                                    <ListItemSecondaryAction sx={{ right: { xs: 8, sm: 16 } }}>
                                         <Tooltip title="Sil">
                                             <IconButton
                                                 edge="end"
+                                                size={isMobile ? 'small' : 'medium'}
                                                 onClick={(e) => { e.stopPropagation(); handleDelete(notification.id); }}
                                             >
-                                                <DeleteIcon />
+                                                <DeleteIcon fontSize={isMobile ? 'small' : 'medium'} />
                                             </IconButton>
                                         </Tooltip>
                                     </ListItemSecondaryAction>
@@ -402,7 +474,13 @@ const Notifications = () => {
             </Paper>
 
             {/* Settings Dialog */}
-            <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)} maxWidth="sm" fullWidth>
+            <Dialog
+                open={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                maxWidth="sm"
+                fullWidth
+                fullScreen={isMobile}
+            >
                 <DialogTitle>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <SettingsIcon />
